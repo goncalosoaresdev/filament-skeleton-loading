@@ -14,7 +14,7 @@ export default defineConfig({
     starlight({
       title: 'Filament Skeleton Loading',
       description: 'Skeleton loading states for Filament: lazy widgets, deferred tables and lazy sections show the shape of what is coming instead of a grey box or a spinner.',
-      favicon: `${releaseBasePath}/favicon-32x32.png`,
+      favicon: '/favicon-32x32.png',
       head: [
         { tag: 'link', attrs: { rel: 'icon', href: `${releaseBasePath}/favicon.ico`, sizes: 'any' } },
         { tag: 'link', attrs: { rel: 'icon', type: 'image/png', sizes: '96x96', href: `${releaseBasePath}/favicon-96x96.png` } },

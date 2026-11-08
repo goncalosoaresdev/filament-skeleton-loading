@@ -21,9 +21,9 @@ permissions:
 jobs:
   publish:
     if: github.event_name == 'workflow_dispatch' || (github.event.release.draft == false && github.event.release.prerelease == false && vars.DOCS_DEPLOY_ENABLED == 'true')
-    uses: mortalkiller/filament-package-template/.github/workflows/reusable-docs-release.yml@db391cee470edc945779f419e909eea9283f1193
+    uses: mortalkiller/filament-package-template/.github/workflows/reusable-docs-release.yml@50aa14ee7a84caf7a0065a5937d5fd98c5298600
     with:
-      standard-ref: db391cee470edc945779f419e909eea9283f1193
+      standard-ref: 50aa14ee7a84caf7a0065a5937d5fd98c5298600
       artifact-name: filament-skeleton-loading-release-docs
       release-tag: ${{ inputs.release-tag || github.event.release.tag_name }}
       dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run }}
@@ -39,14 +39,14 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           repository: mortalkiller/filament-package-template
-          ref: db391cee470edc945779f419e909eea9283f1193
+          ref: 50aa14ee7a84caf7a0065a5937d5fd98c5298600
           path: .mortal-package-standard
           persist-credentials: false
 
       - name: Set up Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
-          node-version: '22.20.0'
+          node-version: '22.23.4'
           package-manager-cache: false
 
       - name: Download verified artifacts

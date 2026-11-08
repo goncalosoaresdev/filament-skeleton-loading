@@ -15,6 +15,6 @@ concurrency:
 
 jobs:
   standard:
-    uses: mortalkiller/filament-package-template/.github/workflows/reusable-standard-check.yml@db391cee470edc945779f419e909eea9283f1193
+    uses: mortalkiller/filament-package-template/.github/workflows/reusable-standard-check.yml@50aa14ee7a84caf7a0065a5937d5fd98c5298600
     with:
-      standard-ref: db391cee470edc945779f419e909eea9283f1193
+      standard-ref: 50aa14ee7a84caf7a0065a5937d5fd98c5298600
