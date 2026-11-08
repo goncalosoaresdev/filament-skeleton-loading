@@ -1,4 +1,4 @@
-![Filament Skeleton Loading showcase](docs/screenshots/dashboard-light.png)
+![Filament Skeleton Loading: beautiful loading states for Filament 4 & 5](docs/filament-skeleton-loading-cover.webp)
 
 # Filament Skeleton Loading
 
