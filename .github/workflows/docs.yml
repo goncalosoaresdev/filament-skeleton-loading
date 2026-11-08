@@ -1,0 +1,21 @@
+name: Documentation
+
+on:
+  pull_request:
+  push:
+    branches: ['*.x']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docs:
+    uses: $/.github/workflows/reusable-docs.yml
+    with:
+      artifact-name: filament-package-template-docs
+      deploy: false

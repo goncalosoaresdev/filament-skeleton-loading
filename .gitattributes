@@ -1,0 +1,20 @@
+* text=auto eol=lf
+/.github export-ignore
+/.template export-ignore
+/docs export-ignore
+/docs-site export-ignore
+/tests export-ignore
+/AGENTS.md export-ignore
+/CONTRIBUTING.md export-ignore
+/.editorconfig export-ignore
+/phpstan.neon.dist export-ignore
+/phpunit.xml.dist export-ignore
+/pint.json export-ignore
+/rector.php export-ignore
+/bin export-ignore
+/package.json export-ignore
+/playwright.config.mjs export-ignore
+/testbench.yaml export-ignore
+/workbench export-ignore
+/resources/css export-ignore
+/resources/js export-ignore

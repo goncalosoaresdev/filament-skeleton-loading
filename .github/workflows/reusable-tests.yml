@@ -1,0 +1,114 @@
+name: Reusable PHP tests
+
+on:
+  workflow_call:
+    inputs:
+      matrix-json:
+        description: JSON strategy matrix containing os, php, laravel, testbench, Filament package/constraint, and optional dependency mode entries and per-matrix legacy advisory exceptions.
+        required: true
+        type: string
+      test-command:
+        description: Command used to run the package PHP test suite.
+        required: false
+        default: composer test
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  php:
+    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(inputs.matrix-json) }}
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - F${{ matrix.filament }} - ${{ matrix.dependencies || 'latest' }} - ${{ matrix.os || 'ubuntu-latest' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ~/.composer/cache/files
+          key: composer-${{ matrix.os || 'ubuntu-latest' }}-${{ matrix.php }}-${{ matrix.laravel }}-${{ matrix.filament }}-${{ matrix.dependencies || 'latest' }}-${{ hashFiles('composer.json') }}
+          restore-keys: |
+            composer-${{ matrix.os || 'ubuntu-latest' }}-${{ matrix.php }}-${{ matrix.laravel }}-
+            composer-${{ matrix.os || 'ubuntu-latest' }}-${{ matrix.php }}-
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: intl, mbstring, pdo_sqlite, dom, fileinfo, curl, zip
+          coverage: none
+          tools: composer:v2
+
+      # Exceptions are opt-in per exact legacy matrix entry, never for consumers.
+      # This global Composer setting is isolated to the current GitHub Actions runner.
+      - name: Allow legacy Filament advisory in compatibility job
+        if: ${{ matrix.compatibility_advisory != '' }}
+        shell: bash
+        env:
+          COMPATIBILITY_ADVISORY: ${{ matrix.compatibility_advisory }}
+        run: |
+          set -euo pipefail
+          composer config --global --merge --json policy.advisories.ignore-id \
+            "$(jq -cn --arg id "$COMPATIBILITY_ADVISORY" \
+              '{($id): "CI-only compatibility testing of a legacy dependency; this exception must not be used in production."}')"
+          echo "::warning title=Legacy compatibility advisory::Ignoring $COMPATIBILITY_ADVISORY in this isolated CI job only."
+
+      - name: Validate Composer package
+        run: composer validate --strict --no-check-lock
+
+      - name: Resolve compatibility boundary
+        shell: bash
+        env:
+          LARAVEL_CONSTRAINT: ${{ matrix.laravel }}
+          TESTBENCH_CONSTRAINT: ${{ matrix.testbench }}
+          FILAMENT_PACKAGE: ${{ matrix.filament_package || 'filament/filament' }}
+          FILAMENT_CONSTRAINT: ${{ matrix.filament }}
+          DEPENDENCY_MODE: ${{ matrix.dependencies || 'latest' }}
+          EXPECTED_FILAMENT_VERSION: ${{ matrix.expected_filament || '' }}
+        run: |
+          set -euo pipefail
+
+
+          composer require "laravel/framework:${LARAVEL_CONSTRAINT}" "${FILAMENT_PACKAGE}:${FILAMENT_CONSTRAINT}" --no-update --no-interaction
+          composer require --dev "orchestra/testbench:${TESTBENCH_CONSTRAINT}" --no-update --no-interaction
+
+          case "$DEPENDENCY_MODE" in
+            lowest)
+              composer update --prefer-lowest --prefer-dist --no-interaction --no-progress
+              ;;
+            latest)
+              composer update --prefer-dist --no-interaction --no-progress
+              ;;
+            *)
+              echo "Unsupported dependency mode: $DEPENDENCY_MODE" >&2
+              exit 1
+              ;;
+          esac
+
+          composer show laravel/framework
+          composer show "$FILAMENT_PACKAGE"
+
+          if [[ -n "${EXPECTED_FILAMENT_VERSION:-}" ]]; then
+            resolved_version="$(composer show "$FILAMENT_PACKAGE" --format=json | php -r '$data = json_decode(stream_get_contents(STDIN), true); $version = $data["versions"][0] ?? ""; echo preg_replace("/^[* ]*v?/", "", $version);')"
+
+            if [[ "$resolved_version" != "$EXPECTED_FILAMENT_VERSION" ]]; then
+              echo "Expected Filament package [$FILAMENT_PACKAGE] version [$EXPECTED_FILAMENT_VERSION], resolved [$resolved_version]." >&2
+              exit 1
+            fi
+          fi
+
+      - name: Audit resolved dependencies
+        run: composer audit --locked --no-interaction
+
+      - name: Run PHP tests
+        env:
+          TEST_COMMAND: ${{ inputs.test-command }}
+        shell: bash
+        run: bash -lc "$TEST_COMMAND"

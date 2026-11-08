@@ -1,0 +1,54 @@
+name: Package tests
+
+on:
+  pull_request:
+  push:
+    branches: ['*.x']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    uses: $/.github/workflows/reusable-tests.yml
+    with:
+      matrix-json: >-
+        {"include":[{"os":"ubuntu-latest","php":"8.2","laravel":"12.*","testbench":"^10.0","filament_package":"filament/filament","filament":"5.8.1","dependencies":"lowest","expected_filament":"5.8.1","compatibility_advisory":"PKSA-cnr1-6g7k-bp3d"},{"os":"ubuntu-latest","php":"8.3","laravel":"12.*","testbench":"^10.0","filament_package":"filament/filament","filament":"^5.8.1","dependencies":"latest"},{"os":"ubuntu-latest","php":"8.4","laravel":"13.*","testbench":"^11.0","filament_package":"filament/filament","filament":"^5.8.1","dependencies":"latest"},{"os":"windows-latest","php":"8.4","laravel":"13.*","testbench":"^11.0","filament_package":"filament/filament","filament":"^5.8.1","dependencies":"latest"},{"os":"ubuntu-latest","php":"8.5","laravel":"13.*","testbench":"^11.0","filament_package":"filament/filament","filament":"^5.8.1","dependencies":"latest"}]}
+
+  skills:
+    name: Package standard skill distribution
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ~/.composer/cache/files
+          key: composer-skill-${{ hashFiles('composer.json') }}
+          restore-keys: |
+            composer-skill-
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Verify developing-filament-packages distribution
+        shell: bash
+        run: |
+          test -f vendor/mortalkiller/filament-package-standard/resources/boost/skills/developing-filament-packages/SKILL.md
+          grep -F 'name: developing-filament-packages' vendor/mortalkiller/filament-package-standard/resources/boost/skills/developing-filament-packages/SKILL.md

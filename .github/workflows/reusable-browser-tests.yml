@@ -1,0 +1,103 @@
+name: Reusable browser tests
+
+on:
+  workflow_call:
+    inputs:
+      filament-matrix-json:
+        description: JSON matrix of Filament versions, with optional per-job compatibility_advisory.
+        required: true
+        type: string
+      php-version:
+        required: false
+        default: '8.4'
+        type: string
+      prepare-command:
+        required: false
+        default: composer browser:prepare
+        type: string
+      test-command:
+        required: false
+        default: npm run test:browser
+        type: string
+      node-version:
+        required: false
+        default: '22.20.0'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(inputs.filament-matrix-json) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962
+        with:
+          php-version: ${{ inputs.php-version }}
+          extensions: intl, mbstring, pdo_sqlite, dom, fileinfo, curl, zip
+          coverage: none
+          tools: composer:v2
+
+      # Exceptions are opt-in per exact legacy matrix entry, never for consumers.
+      # This global Composer setting is isolated to the current GitHub Actions runner.
+      - name: Allow legacy Filament advisory in compatibility job
+        if: ${{ matrix.compatibility_advisory != '' }}
+        shell: bash
+        env:
+          COMPATIBILITY_ADVISORY: ${{ matrix.compatibility_advisory }}
+        run: |
+          set -euo pipefail
+          composer config --global --merge --json policy.advisories.ignore-id \
+            "$(jq -cn --arg id "$COMPATIBILITY_ADVISORY" \
+              '{($id): "CI-only compatibility testing of a legacy dependency; this exception must not be used in production."}')"
+          echo "::warning title=Legacy compatibility advisory::Ignoring $COMPATIBILITY_ADVISORY in this isolated CI job only."
+
+      - name: Resolve Filament boundary
+        env:
+          FILAMENT_CONSTRAINT: ${{ matrix.filament }}
+        run: |
+          composer require "filament/filament:${FILAMENT_CONSTRAINT}" --no-update --no-interaction
+          composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Prepare browser workbench
+        env:
+          PREPARE_COMMAND: ${{ inputs.prepare-command }}
+        run: bash -lc "$PREPARE_COMMAND"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Install JavaScript dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run browser tests
+        env:
+          TEST_COMMAND: ${{ inputs.test-command }}
+        run: bash -lc "$TEST_COMMAND"
+
+      - name: Upload browser artifacts
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: browser-report-filament-${{ matrix.filament }}
+          path: |
+            playwright-report/
+            test-results/
+            workbench/storage/logs/
+          if-no-files-found: ignore
+          retention-days: 7

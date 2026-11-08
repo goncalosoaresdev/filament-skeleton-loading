@@ -1,0 +1,83 @@
+name: Release documentation
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release-tag:
+        description: 'Existing stable release tag (vX.Y.Z)'
+        required: true
+        type: string
+      dry-run:
+        description: 'Verify and build without deploying'
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  publish:
+    if: github.event_name == 'workflow_dispatch' || (github.event.release.draft == false && github.event.release.prerelease == false && vars.DOCS_DEPLOY_ENABLED == 'true')
+    uses: $/.github/workflows/reusable-docs-release.yml
+    with:
+      standard-ref: ${{ github.sha }}
+      artifact-name: filament-package-template-release-docs
+      release-tag: ${{ inputs.release-tag || github.event.release.tag_name }}
+      dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run }}
+
+  deploy:
+    name: Publish versioned documentation
+    needs: publish
+    if: needs.publish.result == 'success' && (github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.dry-run == false))
+    runs-on: ubuntu-latest
+    environment: docs-production
+    steps:
+      - name: Checkout pinned publication tooling
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: mortalkiller/filament-package-template
+          ref: ${{ github.sha }} # __TEMPLATE_TOOLING_REF__
+          path: .mortal-package-standard
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '22.20.0'
+          package-manager-cache: false
+
+      - name: Download verified artifacts
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: filament-package-template-release-docs
+          path: .docs-release
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DOCS_SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.DOCS_SSH_KNOWN_HOSTS }}
+        run: |
+          test -n "$SSH_PRIVATE_KEY"
+          test -n "$SSH_KNOWN_HOSTS"
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Publish without downgrading or deleting other major versions
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release-tag || github.event.release.tag_name }}
+          DOCS_HOST: ${{ secrets.DOCS_HOST }}
+          DOCS_USER: ${{ secrets.DOCS_USER }}
+          DOCS_PORT: ${{ vars.DOCS_PORT || '22' }}
+          DOCS_REMOTE_PATH: ${{ vars.DOCS_REMOTE_PATH }}
+        run: node .mortal-package-standard/tools/docs-release.mjs publish
+
+      - name: Remove the deployment key
+        if: always()
+        run: rm -f ~/.ssh/id_ed25519
