@@ -38,7 +38,7 @@ jobs:
       - name: Checkout pinned publication tooling
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          repository: mortalkiller/filament-skeleton-loading
+          repository: mortalkiller/filament-package-template
           ref: db391cee470edc945779f419e909eea9283f1193
           path: .mortal-package-standard
           persist-credentials: false
