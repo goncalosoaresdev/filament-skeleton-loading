@@ -1,0 +1,20 @@
+name: Browser tests
+
+on:
+  pull_request:
+  push:
+    branches: ['*.x']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: browser-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browser:
+    uses: mortalkiller/filament-package-template/.github/workflows/reusable-browser-tests.yml@db391cee470edc945779f419e909eea9283f1193
+    with:
+      filament-matrix-json: >-
+        {"include":[{"filament":"^5.8.1"}]}

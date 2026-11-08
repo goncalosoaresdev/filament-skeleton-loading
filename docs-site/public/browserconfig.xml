@@ -2,7 +2,7 @@
 <browserconfig>
   <msapplication>
     <tile>
-      <square150x150logo src="/filament-package-template/mstile-150x150.png"/>
+      <square150x150logo src="/filament-skeleton-loading/mstile-150x150.png"/>
       <TileColor>#000000</TileColor>
     </tile>
   </msapplication>

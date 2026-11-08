@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MortalKiller\FilamentPackageTemplate\Tests\StandardChecker;
+namespace MortalKiller\FilamentSkeletonLoading\Tests\StandardChecker;
 
 use PHPUnit\Framework\TestCase;
 

@@ -3,10 +3,9 @@
 This repository follows MortalKiller Filament Package Standard v2.
 
 Canonical standard: https://github.com/mortalkiller/filament-package-standard/blob/2.x/docs/package-standard.md
-Canonical skill: https://github.com/mortalkiller/filament-package-standard/blob/2.x/resources/boost/skills/developing-filament-packages/SKILL.md
+Installed maintainer skill: `vendor/mortalkiller/filament-package-standard/resources/boost/skills/developing-filament-packages/SKILL.md`
+Canonical skill fallback: https://github.com/mortalkiller/filament-package-standard/blob/2.x/resources/boost/skills/developing-filament-packages/SKILL.md
 
-Read the canonical standard and skill before package-template work. Permanent branches are major lines; temporary branches and PRs target the affected major. Releases are immutable tags on verified major commits, without a promotion branch.
+After `composer install`, read and use the installed `developing-filament-packages` skill. If dependencies are not installed, use the canonical skill fallback. Read `docs/development-flow.md` and the canonical standard. Work on temporary branches targeting the affected major. Publish immutable tags on verified major commits; do not introduce a stable-promotion branch.
 
-Run the required CI-equivalent checks and audit public content for private consumer, customer, infrastructure and credential information. Do not claim a release or live documentation deployment was verified when only fixtures or a build ran.
-
-After `composer install`, read and use `vendor/mortalkiller/filament-package-standard/resources/boost/skills/developing-filament-packages/SKILL.md`. If dependencies are not installed, use the canonical skill URL above.
+Before completion, run required CI-equivalent checks and audit public content for private customer, consumer, infrastructure and credential information. Distinguish code/build verification from an actual release or live documentation deployment.

@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   tests:
-    uses: $/.github/workflows/reusable-tests.yml
+    uses: mortalkiller/filament-package-template/.github/workflows/reusable-tests.yml@db391cee470edc945779f419e909eea9283f1193
     with:
       matrix-json: >-
         {"include":[{"os":"ubuntu-latest","php":"8.2","laravel":"12.*","testbench":"^10.0","filament_package":"filament/filament","filament":"5.8.1","dependencies":"lowest","expected_filament":"5.8.1","compatibility_advisory":"PKSA-cnr1-6g7k-bp3d"},{"os":"ubuntu-latest","php":"8.3","laravel":"12.*","testbench":"^10.0","filament_package":"filament/filament","filament":"^5.8.1","dependencies":"latest"},{"os":"ubuntu-latest","php":"8.4","laravel":"13.*","testbench":"^11.0","filament_package":"filament/filament","filament":"^5.8.1","dependencies":"latest"},{"os":"windows-latest","php":"8.4","laravel":"13.*","testbench":"^11.0","filament_package":"filament/filament","filament":"^5.8.1","dependencies":"latest"},{"os":"ubuntu-latest","php":"8.5","laravel":"13.*","testbench":"^11.0","filament_package":"filament/filament","filament":"^5.8.1","dependencies":"latest"}]}

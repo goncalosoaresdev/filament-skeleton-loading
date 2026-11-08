@@ -21,10 +21,10 @@ permissions:
 jobs:
   publish:
     if: github.event_name == 'workflow_dispatch' || (github.event.release.draft == false && github.event.release.prerelease == false && vars.DOCS_DEPLOY_ENABLED == 'true')
-    uses: $/.github/workflows/reusable-docs-release.yml
+    uses: mortalkiller/filament-package-template/.github/workflows/reusable-docs-release.yml@db391cee470edc945779f419e909eea9283f1193
     with:
-      standard-ref: ${{ github.sha }}
-      artifact-name: filament-package-template-release-docs
+      standard-ref: db391cee470edc945779f419e909eea9283f1193
+      artifact-name: filament-skeleton-loading-release-docs
       release-tag: ${{ inputs.release-tag || github.event.release.tag_name }}
       dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run }}
 
@@ -38,8 +38,8 @@ jobs:
       - name: Checkout pinned publication tooling
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          repository: mortalkiller/filament-package-template
-          ref: ${{ github.sha }} # __TEMPLATE_TOOLING_REF__
+          repository: mortalkiller/filament-skeleton-loading
+          ref: db391cee470edc945779f419e909eea9283f1193
           path: .mortal-package-standard
           persist-credentials: false
 
@@ -52,7 +52,7 @@ jobs:
       - name: Download verified artifacts
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
-          name: filament-package-template-release-docs
+          name: filament-skeleton-loading-release-docs
           path: .docs-release
 
       - name: Configure SSH

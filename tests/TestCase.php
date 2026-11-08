@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MortalKiller\FilamentPackageTemplate\Tests;
+namespace MortalKiller\FilamentSkeletonLoading\Tests;
 
-use MortalKiller\FilamentPackageTemplate\FilamentPackageTemplateServiceProvider;
+use MortalKiller\FilamentSkeletonLoading\FilamentSkeletonLoadingServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
@@ -12,7 +12,7 @@ abstract class TestCase extends Orchestra
     protected function getPackageProviders($app): array
     {
         return [
-            FilamentPackageTemplateServiceProvider::class,
+            FilamentSkeletonLoadingServiceProvider::class,
         ];
     }
 }

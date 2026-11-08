@@ -1,1 +1,0 @@
-// Package JavaScript entry point.

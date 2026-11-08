@@ -1,65 +1,64 @@
 {
-  "$schema": "https://getcomposer.org/schema.json",
-  "name": "mortalkiller/filament-package-template",
-  "description": "Template for MortalKiller Filament packages.",
-  "homepage": "https://github.com/mortalkiller/filament-package-template",
-  "keywords": [
-    "filament",
-    "laravel"
-  ],
-  "type": "library",
-  "license": "MIT",
-  "support": {
-    "issues": "https://github.com/mortalkiller/filament-package-template/issues",
-    "source": "https://github.com/mortalkiller/filament-package-template"
-  },
-  "require": {
-    "php": "^8.2",
-    "filament/filament": "^5.8.1",
-    "illuminate/support": "^12.0|^13.0",
-    "spatie/laravel-package-tools": "^1.15.0"
-  },
-  "require-dev": {
-    "larastan/larastan": "^3.0",
-    "laravel/pint": "^1.0",
-    "mortalkiller/filament-package-standard": "^2.0",
-    "orchestra/testbench": "^10.0|^11.0",
-    "phpunit/phpunit": "^11.5|^12.0",
-    "rector/rector": "^2.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "MortalKiller\\FilamentPackageTemplate\\": "src/"
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "mortalkiller/filament-skeleton-loading",
+    "description": "Skeleton loading states for Filament: lazy widgets, deferred tables and lazy sections show the shape of what is coming instead of a grey box or a spinner.",
+    "homepage": "https://github.com/mortalkiller/filament-skeleton-loading",
+    "keywords": [
+        "filament",
+        "laravel"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/mortalkiller/filament-skeleton-loading/issues",
+        "source": "https://github.com/mortalkiller/filament-skeleton-loading"
+    },
+    "require": {
+        "filament/filament": "^5.8.1",
+        "illuminate/support": "^12.0|^13.0",
+        "php": "^8.2",
+        "spatie/laravel-package-tools": "^1.15.0"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.0",
+        "laravel/pint": "^1.0",
+        "mortalkiller/filament-package-standard": "^2.0",
+        "orchestra/testbench": "^10.0|^11.0",
+        "phpunit/phpunit": "^11.5|^12.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "MortalKiller\\FilamentSkeletonLoading\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MortalKiller\\FilamentSkeletonLoading\\Tests\\": "tests/",
+            "Workbench\\": "workbench/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MortalKiller\\FilamentSkeletonLoading\\FilamentSkeletonLoadingServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "analyse": "phpstan analyse --memory-limit=1G",
+        "browser:prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "check": [
+            "@lint",
+            "@analyse",
+            "@test"
+        ],
+        "format": "pint",
+        "lint": "pint --test",
+        "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
+        "serve": "@php vendor/bin/testbench serve",
+        "test": "phpunit"
     }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "MortalKiller\\FilamentPackageTemplate\\Tests\\": "tests/"
-    }
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "MortalKiller\\FilamentPackageTemplate\\FilamentPackageTemplateServiceProvider"
-      ]
-    }
-  },
-  "config": {
-    "sort-packages": true
-  },
-  "scripts": {
-    "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
-    "analyse": "phpstan analyse --memory-limit=1G",
-    "lint": "pint --test",
-    "format": "pint",
-    "refactor": "rector",
-    "test": "phpunit",
-    "test:refactor": "rector --dry-run",
-    "check": [
-      "@lint",
-      "@analyse",
-      "@test:refactor",
-      "@test"
-    ]
-  }
 }

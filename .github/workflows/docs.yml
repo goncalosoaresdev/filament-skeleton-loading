@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   docs:
-    uses: $/.github/workflows/reusable-docs.yml
+    uses: mortalkiller/filament-package-template/.github/workflows/reusable-docs.yml@db391cee470edc945779f419e909eea9283f1193
     with:
-      artifact-name: filament-package-template-docs
+      artifact-name: filament-skeleton-loading-docs
       deploy: false

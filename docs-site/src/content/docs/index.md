@@ -1,5 +1,5 @@
 ---
-title: Filament Package Template
+title: Filament Skeleton Loading
 description: Standard starting point for MortalKiller Filament packages.
 template: splash
 editUrl: false
@@ -7,10 +7,10 @@ hero:
   tagline: Build consistent, documented and maintainable Filament packages.
   actions:
     - text: Get started
-      link: /filament-package-template/getting-started/installation/
+      link: /filament-skeleton-loading/getting-started/installation/
       icon: right-arrow
     - text: API reference
-      link: /filament-package-template/api/
+      link: /filament-skeleton-loading/api/
       variant: minimal
     - text: Pedro Monteiro
       link: https://pedromonteiro.dev

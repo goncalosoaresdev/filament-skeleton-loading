@@ -1,21 +1,11 @@
 # Contributing
 
-Read [Package Standard v2](https://github.com/mortalkiller/filament-package-standard/blob/2.x/docs/package-standard.md) and [Development and release flow](https://github.com/mortalkiller/filament-package-standard/blob/2.x/docs/development-flow.md).
+Read [Development and release flow](docs/development-flow.md) and the [canonical package standard](https://github.com/mortalkiller/filament-package-standard/blob/2.x/docs/package-standard.md).
 
-Create a focused temporary branch from the affected package major (`2.x` for this template) and open a PR to that same major. The major-only flow has no separate stable-promotion branch. Use an issue and acceptance criteria for meaningful changes, preserve existing compatibility boundaries, and include tests and documentation. Squash temporary work after review and successful CI.
+After `composer install`, the maintainer skill is available at `vendor/mortalkiller/filament-package-standard/resources/boost/skills/developing-filament-packages/SKILL.md`.
 
-Run Composer validation, PHP tests, Pint, tracked syntax checks, the package-standard checker, the docs build, and `node --test tools/tests/*.test.mjs` for shared release tooling. Test the initializer and its partial-initialization safety. Do not publish secrets, private applications, customer data or infrastructure in examples or verification logs.
+Create a focused temporary branch from the affected major and open a PR to that same major. Include an issue and acceptance criteria for meaningful changes, preserve backwards compatibility, and update tests and source-derived documentation. Squash temporary branches after review and successful CI.
 
-External reusable workflows and their supporting tools must be pinned to the same validated full commit SHA. Keep older consumer contracts compatible during a rollout. Releases use immutable `vX.Y.Z` tags from verified commits on `X.x`; publishing a stable GitHub Release, not pushing a branch, publishes documentation. Never move existing tags.
+Run the repository's Composer validation, tests, Pint, tracked syntax, compatibility and documentation checks, plus static analysis and JavaScript/browser checks where configured. Do not publish customer data, private applications, infrastructure or secrets in examples.
 
-Report vulnerabilities through GitHub private vulnerability reporting as described in [SECURITY.md](SECURITY.md).
-
-## Agent skill
-
-The repository includes `mortalkiller/filament-package-standard` as a direct development dependency. After `composer install`, read and use:
-
-```text
-vendor/mortalkiller/filament-package-standard/resources/boost/skills/developing-filament-packages/SKILL.md
-```
-
-In real Laravel applications that install both the Standard and Laravel Boost directly, Boost can discover and synchronize the same skill.
+Releases are immutable `vX.Y.Z` tags on verified commits in `X.x`. Stable GitHub Releases publish documentation from the tag; branch pushes do not. Use [SECURITY.md](SECURITY.md) for private vulnerability reporting.

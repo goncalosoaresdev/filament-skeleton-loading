@@ -1,8 +1,8 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
-const repositoryUrl = 'https://github.com/mortalkiller/filament-package-template';
-const basePath = '/filament-package-template';
+const repositoryUrl = 'https://github.com/mortalkiller/filament-skeleton-loading';
+const basePath = '/filament-skeleton-loading';
 const releaseBasePath = process.env.DOCS_BASE_PATH || basePath;
 const majorBranch = process.env.DOCS_MAJOR_BRANCH || '1.x';
 
@@ -12,8 +12,8 @@ export default defineConfig({
   trailingSlash: 'always',
   integrations: [
     starlight({
-      title: 'Filament Package Template',
-      description: 'Template for MortalKiller Filament packages.',
+      title: 'Filament Skeleton Loading',
+      description: 'Skeleton loading states for Filament: lazy widgets, deferred tables and lazy sections show the shape of what is coming instead of a grey box or a spinner.',
       favicon: `${releaseBasePath}/favicon-32x32.png`,
       head: [
         { tag: 'link', attrs: { rel: 'icon', href: `${releaseBasePath}/favicon.ico`, sizes: 'any' } },
