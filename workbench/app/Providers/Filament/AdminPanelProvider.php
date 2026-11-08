@@ -14,6 +14,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use MortalKiller\FilamentSkeletonLoading\SkeletonLoadingPlugin;
 
 final class AdminPanelProvider extends PanelProvider
 {
@@ -26,8 +27,8 @@ final class AdminPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
-            
-            ->plugin(\MortalKiller\FilamentSkeletonLoading\FilamentSkeletonLoadingPlugin::make())
+
+            ->plugin(SkeletonLoadingPlugin::make())
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

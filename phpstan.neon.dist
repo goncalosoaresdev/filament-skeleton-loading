@@ -5,6 +5,8 @@ parameters:
     level: 6
     paths:
         - src
+        - tests/Fixtures
+        - workbench/app
     tmpDir: build/phpstan
     checkOctaneCompatibility: true
     checkModelProperties: true
