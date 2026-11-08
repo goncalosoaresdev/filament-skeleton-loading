@@ -1,4 +1,4 @@
-{{-- Replaces Filament's grey pulsing box (lazy widgets and sections) with a generic skeleton. --}}
+{{-- In panels with the plugin, replaces Filament's grey pulsing box (lazy widgets and sections) with a generic skeleton. --}}
 @props([
     'columnSpan' => [],
     'columnStart' => [],
@@ -8,8 +8,14 @@
 
 @php
     use Filament\Support\View\ComponentAttributeBag;
+    use MortalKiller\FilamentSkeletonLoading\SkeletonLoadingPlugin;
+    use MortalKiller\FilamentSkeletonLoading\SkeletonLoadingServiceProvider;
 @endphp
 
+@if (! SkeletonLoadingPlugin::current())
+    {{-- Panels without the plugin keep Filament's own loading section. --}}
+    @include(SkeletonLoadingServiceProvider::FILAMENT_VIEWS.'::components.loading-section')
+@else
 <div
     role="status"
     aria-busy="true"
@@ -28,3 +34,4 @@
     <span class="fsl-bone fsl-line" style="width: 90%" aria-hidden="true"></span>
     <span class="fsl-bone fsl-line" style="width: 70%" aria-hidden="true"></span>
 </div>
+@endif

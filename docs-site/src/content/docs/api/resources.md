@@ -21,7 +21,7 @@ Namespace `filament-skeleton-loading`, published with the `filament-skeleton-loa
 | `filament-skeleton-loading::placeholder` | The typed skeleton drawn by `HasSkeletonPlaceholder`. |
 | `filament-skeleton-loading::page-loader` | The page loader markup and script. |
 
-The package also puts its own copy of `filament::components.loading-section` first in the `filament` view namespace, so Filament's lazy widgets and sections draw the generic skeleton. This only happens while the package is enabled.
+The package also puts its own copy of `filament::components.loading-section` first in the `filament` view namespace, so Filament's lazy widgets and sections draw the generic skeleton in the panels that use the plugin. In other panels the copy renders Filament's own view. This only happens while the package is enabled.
 
 ## Translations
 
@@ -29,7 +29,7 @@ Namespace `filament-skeleton-loading`, key `loader.label`, published with the `f
 
 ## Stylesheet and CSS hooks
 
-The stylesheet `skeleton-loading` is registered as a Filament asset of the `mortalkiller/filament-skeleton-loading` package.
+The stylesheet `skeleton-loading` is registered as a Filament asset of the `mortalkiller/filament-skeleton-loading` package, loaded on request: the plugin adds it only to the panels that use it.
 
 | Selector | Element |
 | --- | --- |

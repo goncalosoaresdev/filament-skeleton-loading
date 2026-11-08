@@ -97,7 +97,7 @@ CI tests the lowest and latest dependency sets of each Filament major.
 composer require mortalkiller/filament-skeleton-loading
 ```
 
-Register the plugin on the panel:
+Register the plugin on each panel that should use the skeletons. Panels without it keep Filament's own loading states:
 
 ```php
 use MortalKiller\FilamentSkeletonLoading\SkeletonLoadingPlugin;

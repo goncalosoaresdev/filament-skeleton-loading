@@ -23,7 +23,7 @@ trait HasSkeletonPlaceholder
 {
     public function placeholder(): View
     {
-        if (! SkeletonLoadingPlugin::isEnabled()) {
+        if (! SkeletonLoadingPlugin::isEnabled() || ! SkeletonLoadingPlugin::current() instanceof SkeletonLoadingPlugin) {
             return parent::placeholder();
         }
 

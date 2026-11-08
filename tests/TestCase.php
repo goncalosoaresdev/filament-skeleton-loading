@@ -10,11 +10,15 @@ use Filament\Support\SupportServiceProvider;
 use Filament\Widgets\WidgetsServiceProvider;
 use Livewire\LivewireServiceProvider;
 use MortalKiller\FilamentSkeletonLoading\SkeletonLoadingServiceProvider;
+use MortalKiller\FilamentSkeletonLoading\Tests\Fixtures\PlainPanelProvider;
 use MortalKiller\FilamentSkeletonLoading\Tests\Fixtures\TestPanelProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
 {
+    /** The panel each test runs in: `test` uses the plugin, `plain` does not. */
+    protected string $panel = 'test';
+
     protected function getPackageProviders($app): array
     {
         return [
@@ -24,6 +28,7 @@ abstract class TestCase extends Orchestra
             FilamentServiceProvider::class,
             SkeletonLoadingServiceProvider::class,
             TestPanelProvider::class,
+            PlainPanelProvider::class,
         ];
     }
 
@@ -38,7 +43,7 @@ abstract class TestCase extends Orchestra
     {
         parent::setUp();
 
-        Filament::setCurrentPanel(Filament::getPanel('test'));
+        Filament::setCurrentPanel(Filament::getPanel($this->panel));
         Filament::bootCurrentPanel();
     }
 }

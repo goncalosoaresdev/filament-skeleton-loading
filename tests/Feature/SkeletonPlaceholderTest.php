@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use Filament\Facades\Filament;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 use MortalKiller\FilamentSkeletonLoading\SkeletonLoadingPlugin;
 use MortalKiller\FilamentSkeletonLoading\Tests\Fixtures\LatestOrders;
 use MortalKiller\FilamentSkeletonLoading\Tests\Fixtures\Plain;
@@ -52,4 +54,9 @@ it('can turn the shimmer off', function () {
 
     expect($plugin->hasShimmer())->toBeFalse()
         ->and(Filament::getCurrentPanel()->getId())->toBe('test');
+});
+
+it('loads its stylesheet only through the panel', function () {
+    expect(FilamentView::renderHook(PanelsRenderHook::STYLES_AFTER)->toHtml())->toContain('skeleton-loading.css')
+        ->and(FilamentAsset::renderStyles())->not->toContain('skeleton-loading');
 });

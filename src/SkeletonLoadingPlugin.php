@@ -8,6 +8,8 @@ use Closure;
 use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
 use Filament\Panel;
+use Filament\Support\Assets\Css;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Tables\Table;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\Support\Htmlable;
@@ -148,6 +150,15 @@ final class SkeletonLoadingPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
+        if (self::isEnabled()) {
+            $panel->renderHook(
+                PanelsRenderHook::STYLES_AFTER,
+                fn (): string => collect(FilamentAsset::getStyles([self::PACKAGE]))
+                    ->map(fn (Css $stylesheet): string => $stylesheet->getHtml()->toHtml())
+                    ->implode(''),
+            );
+        }
+
         if (self::isEnabled() && $this->pageLoader) {
             $panel->renderHook(PanelsRenderHook::BODY_END, fn (): string => $this->renderPageLoader());
         }

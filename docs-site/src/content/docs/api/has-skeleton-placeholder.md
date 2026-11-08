@@ -34,7 +34,7 @@ Declare them on the component to fine-tune the skeleton. Both are optional.
 
 | Method | Description |
 | --- | --- |
-| `placeholder(): View` | The `filament-skeleton-loading::placeholder` view with the skeleton data. Falls back to the parent placeholder when the package is disabled. |
+| `placeholder(): View` | The `filament-skeleton-loading::placeholder` view with the skeleton data. Falls back to the parent placeholder when the package is disabled or the current panel does not use the plugin. |
 
 ## Shapes
 

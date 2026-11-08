@@ -11,7 +11,7 @@ use MortalKiller\FilamentSkeletonLoading\SkeletonLoadingPlugin;
 $panel->plugin(SkeletonLoadingPlugin::make());
 ```
 
-Register it on each panel that should use the skeletons, the page loader or table deferral. The global `enabled` setting turns everything off, the plugin included.
+Register it on each panel that should use the skeletons, the page loader or table deferral. Panels without it keep Filament's own loading states: the stylesheet is not loaded there, and lazy widgets and sections draw Filament's own placeholder. The global `enabled` setting turns everything off, the plugin included.
 
 ## Constants
 
@@ -52,5 +52,5 @@ All of them return the plugin, so they chain.
 
 ## Lifecycle
 
-- `register(Panel $panel)` adds the page loader to the panel's `BODY_END` render hook when it is on, and a style that hides the shimmer when `shimmer(false)` is set.
+- `register(Panel $panel)` loads the stylesheet through the panel's `STYLES_AFTER` render hook, adds the page loader to its `BODY_END` render hook when it is on, and a style that hides the shimmer when `shimmer(false)` is set.
 - `boot(Panel $panel)` configures every table built while that panel is current, so `deferTables()` and the `defer_tables` setting apply only to the panels that use the plugin.
