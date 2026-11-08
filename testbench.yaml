@@ -1,5 +1,10 @@
 laravel: '@testbench'
 
+env:
+  - APP_ENV=local
+  - CACHE_STORE=array
+  - SESSION_DRIVER=file
+
 providers:
   - MortalKiller\FilamentSkeletonLoading\SkeletonLoadingServiceProvider
   - Workbench\App\Providers\WorkbenchServiceProvider

@@ -15,6 +15,11 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use MortalKiller\FilamentSkeletonLoading\SkeletonLoadingPlugin;
+use Workbench\App\Filament\Pages\Reports;
+use Workbench\App\Filament\Widgets\ChannelShare;
+use Workbench\App\Filament\Widgets\LatestOrders;
+use Workbench\App\Filament\Widgets\OrdersOverview;
+use Workbench\App\Filament\Widgets\RevenueChart;
 
 final class AdminPanelProvider extends PanelProvider
 {
@@ -24,11 +29,22 @@ final class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->brandName('Demo Shop')
             ->pages([
                 Dashboard::class,
+                Reports::class,
             ])
-
-            ->plugin(SkeletonLoadingPlugin::make())
+            ->widgets([
+                OrdersOverview::class,
+                RevenueChart::class,
+                ChannelShare::class,
+                LatestOrders::class,
+            ])
+            ->plugin(
+                SkeletonLoadingPlugin::make()
+                    ->pageLoader()
+                    ->pageLoaderDelay(300),
+            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

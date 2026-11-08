@@ -1,0 +1,102 @@
+import { expect, test } from '@playwright/test'
+
+// The Workbench widgets and the Reports page wait 1.5 s or more (WORKBENCH_LATENCY_MS), so the
+// skeletons and the page loader stay on screen long enough to be asserted.
+
+const widgetsLoaded = async (page) => {
+    await expect(page.locator('.fsl-skeleton')).toHaveCount(0, { timeout: 20000 })
+}
+
+test('lazy widgets show skeletons shaped like them, then the real widgets', async ({ page }) => {
+    await page.goto('/admin')
+
+    await expect(page.locator('.fsl-skeleton--stats')).toBeVisible()
+    await expect(page.locator('.fsl-skeleton--stats .fsl-stat')).toHaveCount(4)
+    await expect(page.locator('.fsl-skeleton--chart')).toHaveCount(2)
+    await expect(page.locator('.fsl-skeleton--table')).toBeVisible()
+
+    await widgetsLoaded(page)
+
+    await expect(page.getByText('Returning customers')).toBeVisible()
+    await expect(page.getByText('ORD-1001')).toBeVisible()
+})
+
+test('chart skeletons follow the chart type and keep the real heading', async ({ page }) => {
+    await page.goto('/admin')
+
+    const bars = page.locator('.fsl-skeleton--chart').filter({ has: page.locator('.fsl-chart-bars') })
+    const ring = page.locator('.fsl-skeleton--chart').filter({ has: page.locator('.fsl-chart-ring') })
+
+    await expect(bars).toContainText('Revenue per month')
+    await expect(ring).toContainText('Orders per channel')
+})
+
+test('skeletons are busy status regions with hidden shapes', async ({ page }) => {
+    await page.goto('/admin')
+
+    const skeleton = page.locator('.fsl-skeleton--stats')
+
+    await expect(skeleton).toHaveAttribute('role', 'status')
+    await expect(skeleton).toHaveAttribute('aria-busy', 'true')
+    await expect(skeleton.locator('.fsl-grid')).toHaveAttribute('aria-hidden', 'true')
+})
+
+test('the shimmer stands still for reduced motion', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto('/admin')
+
+    const display = await page.locator('.fsl-bone').first().evaluate(
+        (bone) => getComputedStyle(bone, '::after').display,
+    )
+
+    expect(display).toBe('none')
+})
+
+test('the page loader stands still for reduced motion', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto('/admin/reports')
+
+    const animations = await page.locator('#fsl-page-loader .fsl-loader-piece, #fsl-page-loader .fsl-loader-label').evaluateAll(
+        (elements) => elements.map((element) => getComputedStyle(element).animationName),
+    )
+
+    expect(animations.length).toBeGreaterThan(1)
+    expect(new Set(animations)).toEqual(new Set(['none']))
+})
+
+test('the page loader covers a slow page change', async ({ page }) => {
+    await page.goto('/admin')
+    await widgetsLoaded(page)
+
+    const loader = page.locator('#fsl-page-loader')
+    await expect(loader).toBeHidden()
+
+    // The click resolves only once the slow page arrives, so watch the old page while it waits.
+    const shown = page.waitForFunction(() => {
+        const element = document.getElementById('fsl-page-loader')
+
+        return element?.getAttribute('aria-hidden') === 'false' && getComputedStyle(element).visibility === 'visible'
+    })
+
+    await Promise.all([
+        shown,
+        page.locator('.fi-sidebar').getByRole('link', { name: 'Reports' }).click(),
+    ])
+
+    await page.waitForURL('**/admin/reports')
+    await expect(page.getByText('The monthly reports are ready.')).toBeVisible()
+    await expect(page.locator('#fsl-page-loader')).toBeHidden()
+})
+
+test('the page loader stays away from Livewire actions', async ({ page }) => {
+    await page.goto('/admin/reports')
+
+    const request = page.waitForResponse(
+        (response) => response.url().includes('/livewire') && response.request().method() === 'POST',
+    )
+    await page.getByRole('button', { name: 'Refresh' }).click()
+    await request
+
+    await expect(page.locator('#fsl-page-loader')).not.toHaveClass(/is-visible/)
+    await expect(page.locator('#fsl-page-loader')).toBeHidden()
+})
