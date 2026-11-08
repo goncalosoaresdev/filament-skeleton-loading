@@ -1,20 +1,56 @@
 ---
 title: Installation
-description: Create a Filament package from template v2.
+description: Install the package and register the plugin on a Filament panel.
 ---
 
-Use the GitHub template from the maintained `2.x` line, then run the initializer with a validated immutable template commit.
+## Requirements
+
+- PHP 8.3, 8.4 or 8.5
+- Laravel 12 or 13
+- Filament 4.12.6+ or 5.8.1+
+
+## Install
 
 ```bash
-php .template/initialize-package.php \
-  --slug=filament-example \
-  --title="Filament Example" \
-  --namespace='MortalKiller\FilamentExample' \
-  --description="Example Filament package." \
-  --type=plugin \
-  --workflow-ref=FULL_VALIDATED_TEMPLATE_COMMIT_SHA
+composer require mortalkiller/filament-skeleton-loading
 ```
 
-Profiles are `plugin`, `theme`, `forms`, `tables`, and `library`. Add config, database, views, translations, stubs, assets, Workbench, browser tests, or Rector only when needed.
+Register the plugin on every panel that should use the skeletons:
 
-A generated package starts on its own `1.x` branch even though it was created from template `2.x`.
+```php
+use MortalKiller\FilamentSkeletonLoading\SkeletonLoadingPlugin;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->plugin(SkeletonLoadingPlugin::make());
+}
+```
+
+## Publish the stylesheet
+
+The stylesheet is registered as a Filament asset. Publish it with Filament's assets:
+
+```bash
+php artisan filament:assets
+```
+
+`php artisan filament:upgrade`, which Filament's installer adds to the `post-autoload-dump` script, already runs it after every `composer install` or `composer update`.
+
+## What changes right away
+
+With the plugin registered and the stylesheet published:
+
+- every lazy widget, relation manager and lazy Livewire component draws a generic skeleton instead of Filament's grey box;
+- deferred tables, the database notifications panel and lazy loaded sections draw skeleton rows instead of a spinner.
+
+Add the `HasSkeletonPlaceholder` trait to get skeletons shaped like stats, chart and table widgets. See [Widgets and tables](/filament-skeleton-loading/guides/widgets-and-tables/).
+
+## Optional publishing
+
+```bash
+php artisan vendor:publish --tag=filament-skeleton-loading-config
+php artisan vendor:publish --tag=filament-skeleton-loading-translations
+php artisan vendor:publish --tag=filament-skeleton-loading-views
+```

@@ -36,8 +36,8 @@ export default defineConfig({
       customCss: ['./src/styles/custom.css'],
       sidebar: [
         { label: 'Getting Started', items: ['getting-started/installation', 'getting-started/compatibility'] },
-        { label: 'Guides', items: ['guides/configuration'] },
-        { label: 'API Reference', items: ['api'] },
+        { label: 'Guides', items: ['guides/widgets-and-tables', 'guides/page-loader', 'guides/configuration'] },
+        { label: 'API Reference', items: ['api', 'api/skeleton-loading-plugin', 'api/has-skeleton-placeholder', 'api/resources'] },
         { label: 'Development', items: ['development/local-development', 'development/testing', 'development/releases'] },
         { label: 'Project', items: ['project/roadmap', 'project/security'] },
       ],

@@ -1,10 +1,10 @@
 ---
 title: Filament Skeleton Loading
-description: Standard starting point for MortalKiller Filament packages.
+description: Skeleton loading states for Filament lazy widgets, lazy sections and deferred tables.
 template: splash
 editUrl: false
 hero:
-  tagline: Build consistent, documented and maintainable Filament packages.
+  tagline: Show the shape of what is coming while Filament loads, instead of a grey box or a spinner.
   actions:
     - text: Get started
       link: /filament-skeleton-loading/getting-started/installation/
@@ -18,12 +18,23 @@ hero:
       variant: minimal
 ---
 
-This documentation skeleton is replaced with package-specific guides and API reference when a new package is initialized.
+Filament Skeleton Loading keeps Filament's own loading mechanisms (`placeholder()`, `deferLoading()` and the `loading-section` view) and only changes what is drawn while they wait: stat tiles, a chart or table rows shaped like the real content.
 
-## Standard areas
+![Dashboard skeletons in light mode](/filament-skeleton-loading/screenshots/dashboard-light.png)
 
-- Getting Started for installation and compatibility.
-- Guides for task-oriented workflows.
-- API Reference derived from real package source code.
-- Development for local setup and tests.
-- Project for roadmap and security information.
+## Highlights
+
+- Typed skeletons for stats, chart and table widgets with one trait.
+- A generic skeleton for every other lazy widget, relation manager or Livewire component.
+- Skeleton rows for deferred tables, the database notifications panel and lazy loaded sections.
+- An opt-in full-screen page loader that only shows when the next page is slow.
+- Plain CSS, light and dark mode, still for reduced motion, no theme build.
+- Filament 4.12.6+ and 5.8.1+ on Laravel 12 and 13.
+
+## Where to go next
+
+- [Installation](/filament-skeleton-loading/getting-started/installation/)
+- [Widgets and tables](/filament-skeleton-loading/guides/widgets-and-tables/)
+- [Page loader](/filament-skeleton-loading/guides/page-loader/)
+- [Configuration](/filament-skeleton-loading/guides/configuration/)
+- [API reference](/filament-skeleton-loading/api/)
