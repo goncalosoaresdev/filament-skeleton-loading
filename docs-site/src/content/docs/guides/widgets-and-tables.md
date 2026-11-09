@@ -45,6 +45,8 @@ protected ?int $skeletonItems = 3; // stat tiles (stats widgets)
 protected ?int $skeletonRows = 8;  // rows (table widgets and relation managers)
 ```
 
+Stats placeholders use the declared integer column count or four tiles by default. Set `$skeletonItems` for widgets with a custom or responsive layout. The placeholder leaves metric calculation to the deferred widget request.
+
 ### Widgets without the trait
 
 Every lazy widget, relation manager or Livewire component that renders Filament's `loading-section` view draws the generic skeleton, with no code change.

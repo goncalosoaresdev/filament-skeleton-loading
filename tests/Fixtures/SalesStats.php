@@ -11,10 +11,7 @@ final class SalesStats extends StatsOverviewWidget
 {
     use HasSkeletonPlaceholder;
 
-    protected function getColumns(): int
-    {
-        return 3;
-    }
+    protected int|array|null $columns = 3;
 
     protected function getStats(): array
     {

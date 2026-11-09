@@ -23,12 +23,12 @@ jobs:
     with:
       matrix-json: >-
         {"include":[
-          {"php":"8.3","laravel":"12.*","testbench":"^10.0","filament_package":"filament/filament","filament":"4.12.6","dependencies":"lowest","expected_filament":"4.12.6","compatibility_advisory":"PKSA-cnr1-6g7k-bp3d"},
-          {"php":"8.4","laravel":"13.*","testbench":"^11.0","filament_package":"filament/filament","filament":"^4.12.6","dependencies":"latest"},
-          {"php":"8.5","laravel":"13.*","testbench":"^11.0","filament_package":"filament/filament","filament":"^4.12.6","dependencies":"latest"},
-          {"php":"8.3","laravel":"12.*","testbench":"^10.0","filament_package":"filament/filament","filament":"5.8.1","dependencies":"lowest","expected_filament":"5.8.1","compatibility_advisory":"PKSA-cnr1-6g7k-bp3d"},
-          {"php":"8.4","laravel":"13.*","testbench":"^11.0","filament_package":"filament/filament","filament":"^5.8.1","dependencies":"latest"},
-          {"php":"8.5","laravel":"13.*","testbench":"^11.0","filament_package":"filament/filament","filament":"^5.8.1","dependencies":"latest"}
+          {"php":"8.3","laravel":"12.*","testbench":"^10.0","filament_package":"filament/filament","filament":"4.15.2","dependencies":"lowest","expected_filament":"4.15.2"},
+          {"php":"8.4","laravel":"13.*","testbench":"^11.0","filament_package":"filament/filament","filament":"^4.15.2","dependencies":"latest"},
+          {"php":"8.5","laravel":"13.*","testbench":"^11.0","filament_package":"filament/filament","filament":"^4.15.2","dependencies":"latest"},
+          {"php":"8.3","laravel":"12.*","testbench":"^10.0","filament_package":"filament/filament","filament":"5.10.2","dependencies":"lowest","expected_filament":"5.10.2"},
+          {"php":"8.4","laravel":"13.*","testbench":"^11.0","filament_package":"filament/filament","filament":"^5.10.2","dependencies":"latest"},
+          {"php":"8.5","laravel":"13.*","testbench":"^11.0","filament_package":"filament/filament","filament":"^5.10.2","dependencies":"latest"}
         ]}
       test-command: composer test
 

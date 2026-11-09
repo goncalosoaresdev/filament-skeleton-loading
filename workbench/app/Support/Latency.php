@@ -12,7 +12,8 @@ final class Latency
 {
     public static function wait(float $factor = 1.0): void
     {
-        $milliseconds = (int) (((int) (getenv('WORKBENCH_LATENCY_MS') ?: 1500)) * $factor);
+        $delay = getenv('WORKBENCH_LATENCY_MS');
+        $milliseconds = (int) (($delay === false ? 1500 : (int) $delay) * $factor);
 
         if ($milliseconds > 0) {
             usleep($milliseconds * 1000);

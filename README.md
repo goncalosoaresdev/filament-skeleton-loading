@@ -94,7 +94,7 @@ The screenshots come from the Workbench demo panel. Run it locally with `compose
 
 | Package | PHP | Laravel | Filament |
 | --- | --- | --- | --- |
-| 1.x | 8.3, 8.4, 8.5 | 12, 13 | 4.12.6+ and 5.8.1+ |
+| 1.x | 8.3, 8.4, 8.5 | 12, 13 | 4.15.2+ and 5.10.2+ |
 
 CI tests the lowest and latest dependency sets of each Filament major.
 

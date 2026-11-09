@@ -7,7 +7,7 @@ description: Install the package and register the plugin on a Filament panel.
 
 - PHP 8.3, 8.4 or 8.5
 - Laravel 12 or 13
-- Filament 4.12.6+ or 5.8.1+
+- Filament 4.15.2+ or 5.10.2+
 
 ## Install
 

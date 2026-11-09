@@ -18,7 +18,7 @@ it('renders an accessible full-screen loader with a generic symbol', function ()
     expect($html)->toContain('id="fsl-page-loader"')
         ->toContain('role="status"')
         ->toContain('fsl-loader-piece')
-        ->toContain('--fsl-loader-delay: 300ms');
+        ->toContain('data-delay="300"');
 });
 
 it('takes the brand symbol, delay and label from the app', function () {
@@ -30,7 +30,7 @@ it('takes the brand symbol, delay and label from the app', function () {
         ->renderPageLoader();
 
     expect($html)->toContain('<svg class="brand">')
-        ->toContain('--fsl-loader-delay: 500ms')
+        ->toContain('data-delay="500"')
         ->toContain('A carregar…');
 });
 

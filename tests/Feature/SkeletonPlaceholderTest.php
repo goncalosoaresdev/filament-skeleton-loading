@@ -6,8 +6,10 @@ use Filament\Facades\Filament;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Filament\Widgets\StatsOverviewWidget;
 use Livewire\Drawer\Utils;
 use Livewire\Mechanisms\ExtendBlade\ExtendBlade;
+use MortalKiller\FilamentSkeletonLoading\Concerns\HasSkeletonPlaceholder;
 use MortalKiller\FilamentSkeletonLoading\SkeletonLoadingPlugin;
 use MortalKiller\FilamentSkeletonLoading\Tests\Fixtures\LatestOrders;
 use MortalKiller\FilamentSkeletonLoading\Tests\Fixtures\Plain;
@@ -28,6 +30,20 @@ it('registers its stylesheet', function () {
 
 it('draws one tile per stats column', function () {
     expect(substr_count(skeletonOf(SalesStats::class), 'fsl-stat'))->toBe(3);
+});
+
+it('draws a default stats placeholder without evaluating its metrics', function () {
+    $widget = new class extends StatsOverviewWidget
+    {
+        use HasSkeletonPlaceholder;
+
+        protected function getStats(): array
+        {
+            throw new LogicException('Statistics must stay deferred.');
+        }
+    };
+
+    expect(substr_count($widget->placeholder()->render(), 'fsl-stat'))->toBe(4);
 });
 
 it('draws bars with the chart heading', function () {

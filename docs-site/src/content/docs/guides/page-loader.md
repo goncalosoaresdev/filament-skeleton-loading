@@ -57,3 +57,5 @@ Give the elements that should come in one after the other the class `fsl-loader-
 ## Accessibility
 
 The loader is a `role="status"` live region. Its label is read by screen readers and is translated for `en`, `pt`, `pt_PT` and `pt_BR`; publish the translations to add a language. The symbol is `aria-hidden`, and all of its motion stops for users who prefer reduced motion.
+
+After updating the package, run `php artisan filament:assets` to publish the page loader script. The script is loaded as an external asset and uses the application's Vite CSP nonce when configured. The asset origin must be permitted by the application's policy.
