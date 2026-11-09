@@ -9,7 +9,7 @@ composer install
 
 ## Workbench demo panel
 
-The Workbench is a Filament panel at `/admin` with lazy stats, bar chart, doughnut and table widgets, and a slow Reports page for the page loader.
+The Workbench is a Filament panel at `/admin` with lazy stats, bar chart, doughnut and table widgets, an Orders page with a deferred table, and a slow Reports page for the page loader. The same demo without the plugin, with Filament's own loading states, is at `/plain`.
 
 ```bash
 composer browser:prepare

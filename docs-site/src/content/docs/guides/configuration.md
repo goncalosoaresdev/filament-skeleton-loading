@@ -41,6 +41,8 @@ $panel->plugin(
 
 The shimmer and the page loader always stand still for users who prefer reduced motion, whatever `shimmer()` says. Skeleton colours follow Filament's light and dark mode.
 
+![Dashboard skeletons in dark mode](/filament-skeleton-loading/screenshots/dashboard-dark.png)
+
 ## Accessibility
 
 Every skeleton is a `role="status"` region with `aria-busy="true"` and Filament's translated "Loading" label for screen readers. The shapes themselves are `aria-hidden`.

@@ -9,3 +9,4 @@ providers:
   - MortalKiller\FilamentSkeletonLoading\SkeletonLoadingServiceProvider
   - Workbench\App\Providers\WorkbenchServiceProvider
   - Workbench\App\Providers\Filament\AdminPanelProvider
+  - Workbench\App\Providers\Filament\PlainPanelProvider

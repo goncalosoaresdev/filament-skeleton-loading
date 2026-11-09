@@ -81,7 +81,11 @@ The page loader with the default symbol:
 
 ![Page loader](docs/screenshots/page-loader-light.png)
 
-The screenshots come from the Workbench demo panel. Run it locally with `composer browser:prepare && composer serve` and open `/admin`.
+For comparison, the same dashboard without the plugin, with Filament's own loading states:
+
+![Dashboard without the plugin](docs/screenshots/without-plugin-light.png)
+
+The screenshots come from the Workbench demo panel. Run it locally with `composer browser:prepare && composer serve` and open `/admin`, or `/plain` for the same panel without the plugin.
 
 ## Version compatibility
 

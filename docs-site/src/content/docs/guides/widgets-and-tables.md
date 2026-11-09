@@ -30,6 +30,12 @@ The trait picks the shape from the class:
 | `TableWidget`, `RelationManager` | A header and 5 rows. |
 | Anything else | The generic skeleton: a title and two lines. |
 
+![Stats overview skeleton: one tile per column](/filament-skeleton-loading/screenshots/widget-stats-light.png)
+
+![Chart skeletons: bars and a ring under the real headings](/filament-skeleton-loading/screenshots/widget-charts-light.png)
+
+![Table widget skeleton: a header and five rows](/filament-skeleton-loading/screenshots/widget-table-light.png)
+
 The skeleton keeps the widget's column span, column start and placeholder height, so the layout does not jump when the content arrives.
 
 ### Fine-tuning
@@ -57,6 +63,8 @@ public function table(Table $table): Table
 ```
 
 While the records load, the table draws skeleton rows instead of Filament's spinner.
+
+![Deferred table drawing skeleton rows](/filament-skeleton-loading/screenshots/deferred-table-light.png)
 
 To defer every table of a panel, call `deferTables()` on the plugin or turn the `defer_tables` setting on. A closure decides per table:
 

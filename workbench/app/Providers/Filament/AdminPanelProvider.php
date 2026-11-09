@@ -15,6 +15,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use MortalKiller\FilamentSkeletonLoading\SkeletonLoadingPlugin;
+use Workbench\App\Filament\Pages\Orders;
 use Workbench\App\Filament\Pages\Reports;
 use Workbench\App\Filament\Widgets\ChannelShare;
 use Workbench\App\Filament\Widgets\LatestOrders;
@@ -32,6 +33,7 @@ final class AdminPanelProvider extends PanelProvider
             ->brandName('Demo Shop')
             ->pages([
                 Dashboard::class,
+                Orders::class,
                 Reports::class,
             ])
             ->widgets([

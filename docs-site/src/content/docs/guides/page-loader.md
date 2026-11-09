@@ -10,7 +10,9 @@ SkeletonLoadingPlugin::make()
     ->pageLoader();
 ```
 
-![Page loader with the default symbol](/filament-skeleton-loading/screenshots/page-loader-light.png)
+| Light | Dark |
+| --- | --- |
+| ![Page loader with the default symbol in light mode](/filament-skeleton-loading/screenshots/page-loader-light.png) | ![Page loader with the default symbol in dark mode](/filament-skeleton-loading/screenshots/page-loader-dark.png) |
 
 ## When it shows
 

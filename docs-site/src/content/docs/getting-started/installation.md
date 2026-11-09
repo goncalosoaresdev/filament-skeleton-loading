@@ -45,6 +45,12 @@ With the plugin registered and the stylesheet published:
 - every lazy widget, relation manager and lazy Livewire component draws a generic skeleton instead of Filament's grey box;
 - deferred tables, the database notifications panel and lazy loaded sections draw skeleton rows instead of a spinner.
 
+The Workbench demo dashboard, without and with the plugin (its widgets also use the trait):
+
+| Without the plugin | With the plugin |
+| --- | --- |
+| ![Filament's own grey loading boxes](/filament-skeleton-loading/screenshots/without-plugin-light.png) | ![Skeletons shaped like the widgets](/filament-skeleton-loading/screenshots/dashboard-light.png) |
+
 Add the `HasSkeletonPlaceholder` trait to get skeletons shaped like stats, chart and table widgets. See [Widgets and tables](/filament-skeleton-loading/guides/widgets-and-tables/).
 
 ## Optional publishing

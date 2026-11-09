@@ -31,7 +31,7 @@ The README and documentation screenshots come from the Workbench:
 PHP_CLI_SERVER_WORKERS=8 WORKBENCH_LATENCY_MS=8000 CAPTURE_SCREENSHOTS=1 npx playwright test screenshots
 ```
 
-Copy the new files from `docs/screenshots` to `docs-site/public/screenshots`.
+The spec writes each image to `docs/screenshots` (README) and `docs-site/public/screenshots` (documentation site).
 
 ## CI
 
