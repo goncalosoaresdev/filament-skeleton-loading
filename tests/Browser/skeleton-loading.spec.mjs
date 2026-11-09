@@ -144,14 +144,16 @@ test('page loader keeps a single set of listeners after SPA navigation', async (
         }
     })
 
-    await page.goto('/admin')
+    await page.goto('/admin/reports')
     await expect(page.locator('script[src*="/page-loader.js"]')).toHaveCount(1)
     await expect.poll(() => page.evaluate(() => window.pageLoaderSubmitListeners)).toBe(1)
 
     await page.evaluate(() => window.Livewire.navigate('/admin/orders'))
     await expect(page).toHaveURL(/\/admin\/orders$/)
+    await expect(page.getByText('ORD-1001', { exact: true })).toBeVisible()
     await page.evaluate(() => window.Livewire.navigate('/admin/reports'))
     await expect(page).toHaveURL(/\/admin\/reports$/)
+    await expect(page.getByText('The monthly reports are ready.')).toBeVisible()
     expect(await page.evaluate(() => window.pageLoaderSubmitListeners)).toBe(1)
 })
 
