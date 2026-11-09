@@ -19,7 +19,7 @@ Namespace `filament-skeleton-loading`, published with the `filament-skeleton-loa
 | View | Purpose |
 | --- | --- |
 | `filament-skeleton-loading::placeholder` | The typed skeleton drawn by `HasSkeletonPlaceholder`. |
-| `filament-skeleton-loading::page-loader` | The page loader markup and script. |
+| `filament-skeleton-loading::page-loader` | The page loader markup and external script reference. |
 
 The package also puts its own copy of `filament::components.loading-section` first in the `filament` view namespace, so Filament's lazy widgets and sections draw the generic skeleton in the panels that use the plugin. In other panels the copy renders Filament's own view. This only happens while the package is enabled.
 

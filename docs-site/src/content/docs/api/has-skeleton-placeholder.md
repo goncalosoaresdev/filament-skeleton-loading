@@ -27,7 +27,7 @@ Declare them on the component to fine-tune the skeleton. Both are optional.
 
 | Property | Default | Used by |
 | --- | --- | --- |
-| `protected ?int $skeletonItems` | the stats widget's columns, or 4 | Stats widgets: number of tiles. |
+| `protected ?int $skeletonItems` | the declared integer column count, or 4 | Stats widgets: number of tiles. |
 | `protected ?int $skeletonRows` | 5 | Table widgets and relation managers: number of rows. |
 
 ## Methods

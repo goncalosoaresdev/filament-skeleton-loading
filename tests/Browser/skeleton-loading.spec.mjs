@@ -129,3 +129,48 @@ for (const dismiss of ['click', 'Escape']) {
         await page.getByRole('button', { name: 'Refresh' }).click()
     })
 }
+
+test('page loader keeps a single set of listeners after SPA navigation', async ({ page }) => {
+    await page.addInitScript(() => {
+        const add = document.addEventListener.bind(document)
+        window.pageLoaderSubmitListeners = 0
+
+        document.addEventListener = (type, listener, ...options) => {
+            if (type === 'submit' && String(listener).includes('schedule()')) {
+                window.pageLoaderSubmitListeners++
+            }
+
+            return add(type, listener, ...options)
+        }
+    })
+
+    await page.goto('/admin')
+    await expect(page.locator('script[src*="/page-loader.js"]')).toHaveCount(1)
+    await expect.poll(() => page.evaluate(() => window.pageLoaderSubmitListeners)).toBe(1)
+
+    await page.evaluate(() => window.Livewire.navigate('/admin/orders'))
+    await expect(page).toHaveURL(/\/admin\/orders$/)
+    await page.evaluate(() => window.Livewire.navigate('/admin/reports'))
+    await expect(page).toHaveURL(/\/admin\/reports$/)
+    expect(await page.evaluate(() => window.pageLoaderSubmitListeners)).toBe(1)
+})
+
+test('page loader respects a submit button that opens another tab', async ({ page }) => {
+    await page.goto('/admin/reports')
+
+    await page.clock.install()
+    await page.evaluate(() => {
+        const form = document.createElement('form')
+        const button = document.createElement('button')
+        button.type = 'submit'
+        button.formTarget = '_blank'
+        form.append(button)
+        document.body.append(form)
+
+        // Dispatch only the event so the listener is tested without actually opening a tab.
+        form.dispatchEvent(new SubmitEvent('submit', { bubbles: true, submitter: button }))
+    })
+
+    await page.clock.fastForward(500)
+    await expect(page.locator('#fsl-page-loader')).toHaveAttribute('aria-hidden', 'true')
+})

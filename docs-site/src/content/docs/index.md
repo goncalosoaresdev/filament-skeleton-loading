@@ -29,7 +29,7 @@ Filament Skeleton Loading keeps Filament's own loading mechanisms (`placeholder(
 - Skeleton rows for deferred tables, the database notifications panel and lazy loaded sections.
 - An opt-in full-screen page loader that only shows when the next page is slow.
 - Plain CSS, light and dark mode, still for reduced motion, no theme build.
-- Filament 4.12.6+ and 5.8.1+ on Laravel 12 and 13.
+- Filament 4.15.2+ and 5.10.2+ on Laravel 12 and 13.
 
 ## Where to go next
 

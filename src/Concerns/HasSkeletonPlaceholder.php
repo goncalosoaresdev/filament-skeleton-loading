@@ -61,7 +61,8 @@ trait HasSkeletonPlaceholder
             return 4;
         }
 
-        $columns = $this->getColumns();
+        // Reading the declared columns keeps getStats() out of the initial request.
+        $columns = $this->columns;
 
         return is_int($columns) ? max(1, $columns) : 4;
     }

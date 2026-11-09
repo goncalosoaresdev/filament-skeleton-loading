@@ -22,4 +22,4 @@ jobs:
     uses: mortalkiller/filament-package-template/.github/workflows/reusable-browser-tests.yml@50aa14ee7a84caf7a0065a5937d5fd98c5298600
     with:
       filament-matrix-json: >-
-        {"include":[{"filament":"4.12.6","compatibility_advisory":"PKSA-cnr1-6g7k-bp3d"},{"filament":"^5.8.1"}]}
+        {"include":[{"filament":"4.15.2"},{"filament":"^5.10.2"}]}
