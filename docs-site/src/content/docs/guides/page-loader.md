@@ -25,7 +25,9 @@ It never shows for:
 - links with `wire:navigate`, `download`, a target other than `_self`, or a modifier key;
 - links to the current page.
 
-It hides itself after 10 seconds, and when the browser restores the page from the back/forward cache.
+The browser may stay on the page after all: the user cancels a "leave page?" prompt (Filament's unsaved changes alert, for example), or the link answers with a file download. A click on the loader or Escape then hides it. It also hides itself after 10 seconds, and when the browser restores the page from the back/forward cache.
+
+Give download links the `download` attribute, so they never show the loader.
 
 ## Options
 

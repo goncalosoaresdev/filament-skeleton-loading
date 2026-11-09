@@ -1,7 +1,9 @@
 {{--
     Full-screen loader between pages. Shown when leaving for another page of the app (a link or a
     plain form), only if the next page takes longer than the delay; never for Livewire requests or
-    downloads. Hides itself after 10 s in case the browser never leaves the page.
+    links with a `download` attribute. When the browser never leaves the page (a cancelled "leave
+    page?" prompt, a response that downloads a file), a click on it or Escape hides it, and it hides
+    itself after 10 s.
 
     The symbol's elements with class `fsl-loader-piece` come in one after the other.
 --}}
@@ -79,5 +81,14 @@
 
         // Back/forward cache: the page comes back with the loader still on.
         window.addEventListener('pageshow', hide);
+
+        // The page may never leave: never trap the user behind the loader.
+        loader.addEventListener('pointerdown', hide);
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && loader.classList.contains('is-visible')) {
+                hide();
+            }
+        });
     })();
 </script>

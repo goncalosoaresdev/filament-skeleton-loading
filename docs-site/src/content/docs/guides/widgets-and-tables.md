@@ -92,13 +92,15 @@ Use `rounded(8)` or `rounded('8px')` for an exact radius or `rounded('none')` fo
 
 ## Search skeletons
 
-Opt in per panel when you want skeleton feedback for Filament's native asynchronous select search and global search request:
+Opt in per panel when you want skeleton feedback while Filament's native searchable selects and global search wait for results:
 
 ```php
-SkeletonLoadingPlugin::make()->searchSkeletons();
+SkeletonLoadingPlugin::make()
+    ->selectSearchSkeletons()   // searchable selects
+    ->globalSearchSkeletons();  // global search
 ```
 
-Use `searchSkeletons(globalSearch: false)` for select search only or `searchSkeletons(selects: false)` for global search only. Filament keeps its native messages and keyboard interaction.
+Each method turns one surface on; both are off by default. Filament keeps its native messages and keyboard interaction.
 
 ## Notifications and lazy sections
 
@@ -107,17 +109,7 @@ Use `searchSkeletons(globalSearch: false)` for select search only or `searchSkel
 
 Both work as soon as the plugin is registered.
 
-## Tests in your application
-
-A deferred table has no records until it loads. Load it before asserting:
-
-```php
-Livewire::test(ListOrders::class)
-    ->loadTable()
-    ->assertCanSeeTableRecords($orders);
-```
-
-If you turn `defer_tables` on, pin `SKELETON_LOADING_DEFER_TABLES` in `phpunit.xml` so the tests do not depend on `.env`.
+### Deferred schema shapes
 
 Deferred schemas use a form placeholder by default. A deferred schema on a `ViewRecord` page gets a read-only layout, and a schema directly inside a repeater gets a list layout. To select a shape explicitly, call the fluent method on the schema you defer:
 
@@ -130,3 +122,17 @@ $schema
 ```
 
 The enum provides `Form`, `Infolist` and `List`. The method selects the visual shape while Filament controls when the schema loads.
+
+`skeletonPlaceholder()` stores its choice in the schema's extra attributes. Call it after any `extraAttributes([...])` on the same schema, or pass `merge: true` to `extraAttributes()`, because a plain `extraAttributes([...])` replaces the attributes set before it. The same applies to the automatic choice: a plain `extraAttributes([...])` falls back to the form placeholder.
+
+## Tests in your application
+
+A deferred table has no records until it loads. Load it before asserting:
+
+```php
+Livewire::test(ListOrders::class)
+    ->loadTable()
+    ->assertCanSeeTableRecords($orders);
+```
+
+If you turn `defer_tables` on, pin `SKELETON_LOADING_DEFER_TABLES` in `phpunit.xml` so the tests do not depend on `.env`.

@@ -116,17 +116,26 @@ final class SkeletonLoadingPlugin implements Plugin
         return $this;
     }
 
-    public function searchSkeletons(bool $condition = true, bool $selects = true, bool $globalSearch = true): self
+    /** Skeleton lines while a searchable select waits for its options (off by default). */
+    public function selectSearchSkeletons(bool $condition = true): self
     {
-        $this->selectSearchSkeletons = $condition && $selects;
-        $this->globalSearchSkeletons = $condition && $globalSearch;
+        $this->selectSearchSkeletons = $condition;
+
+        return $this;
+    }
+
+    /** Skeleton lines under the global search field while it waits for results (off by default). */
+    public function globalSearchSkeletons(bool $condition = true): self
+    {
+        $this->globalSearchSkeletons = $condition;
 
         return $this;
     }
 
     /**
      * A full-screen loader between pages of the panel (off by default). Shown only when the next
-     * page takes longer than the delay; never for Livewire requests or downloads.
+     * page takes longer than the delay; never for Livewire requests or `download` links. A click or
+     * Escape hides it when the browser stays on the page.
      */
     public function pageLoader(bool $condition = true): self
     {

@@ -100,3 +100,32 @@ test('the page loader stays away from Livewire actions', async ({ page }) => {
     await expect(page.locator('#fsl-page-loader')).not.toHaveClass(/is-visible/)
     await expect(page.locator('#fsl-page-loader')).toBeHidden()
 })
+
+for (const dismiss of ['click', 'Escape']) {
+    test(`the page loader never traps the user when the page stays (${dismiss})`, async ({ page }) => {
+        await page.goto('/admin/reports')
+
+        // Like Filament's unsaved changes alert: the user cancels the "leave page?" prompt.
+        await page.evaluate(() => window.addEventListener('beforeunload', (event) => {
+            event.preventDefault()
+            event.returnValue = true
+        }))
+        page.on('dialog', (dialog) => dialog.dismiss())
+
+        const loader = page.locator('#fsl-page-loader')
+
+        await page.locator('.fi-sidebar').getByRole('link', { name: 'Dashboard' }).click({ noWaitAfter: true })
+        await expect(loader).toBeVisible()
+        expect(new URL(page.url()).pathname).toBe('/admin/reports')
+
+        if (dismiss === 'click') {
+            await loader.click()
+        } else {
+            await page.keyboard.press('Escape')
+        }
+
+        // Well before the loader's own 10 s safety timeout.
+        await expect(loader).toBeHidden({ timeout: 2000 })
+        await page.getByRole('button', { name: 'Refresh' }).click()
+    })
+}

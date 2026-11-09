@@ -21,9 +21,9 @@ Plain CSS and Blade, no theme build, no new loading behaviour: the package only 
 
 Filament already loads widgets lazily and can defer tables, but while they load it shows an empty pulsing box or a spinner. The page then jumps when the real content arrives, and nothing tells the user what is about to appear. Fixing that per widget means overriding `placeholder()` and writing skeleton markup and CSS in every application.
 
-This package keeps Filament's own loading mechanisms and changes what is drawn while waiting. Deferred tables can reflect visible columns or a card grid. Tables that already use Filament's `loadingSkeleton()` inherit the package styling during updates.
+This package keeps Filament's own loading mechanisms (`placeholder()`, `deferLoading()`, deferred schemas, the `loading-section` view) and only changes what is drawn while waiting, in the panels that register the plugin.
 
-Deferred schemas offer form, infolist and list placeholders. Use `searchSkeletons()` to opt in per panel or `searchSkeletons(globalSearch: false)` to enable only select search placeholders. Actions such as saving, exporting and uploading retain their native progress indicators.
+Non-goals: skeletons for modals, and progress for actions such as saving, exporting or uploading, which keep Filament's native indicators. Tables keep Filament's own behaviour while they search, sort, filter or paginate, unless a table opts in to Filament's `loadingSkeleton()`.
 
 ## Documentation
 
@@ -64,10 +64,13 @@ Full documentation, guides and API reference:
   - table widget: header and rows.
 - **Relation managers** with the same trait get a table skeleton.
 - **Generic skeleton** for every other lazy widget, relation manager or Livewire component, with no code change.
-- **Deferred tables** draw skeleton rows instead of Filament's spinner.
+- **Deferred tables** draw skeleton rows instead of Filament's spinner, following the visible columns or the card grid where Filament exposes them.
+- **Native table skeletons**: tables that use Filament's `loadingSkeleton()` get the package's colours and radius while they update.
 - **Database notifications** panel: three placeholder notifications instead of a spinner.
-- **Lazy loaded schemas** (`Section::make()->schema(...)->lazyLoaded()`): form rows (label and field) instead of a spinner.
+- **Lazy loaded schemas** (`Section::make()->schema(...)->lazyLoaded()`): form, infolist or list placeholders instead of a spinner, chosen from the page or with `skeletonPlaceholder()`.
+- **Search skeletons** (opt-in): skeleton lines while searchable selects and the global search wait for results.
 - **Page loader** (opt-in): a full-screen loader between pages with your brand symbol, shown only when the next page is slow.
+- **Rounded corners** per panel with `rounded()`, from the theme's radius tokens or exact pixels.
 - **Shimmer** that can be turned off, and that always stands still for `prefers-reduced-motion`.
 - Light and dark mode; translations for `en`, `pt`, `pt_PT` and `pt_BR`.
 
@@ -160,7 +163,7 @@ SkeletonLoadingPlugin::make()
 
 ## Page loader
 
-Off by default. When on, leaving for another page of the panel (a link or a plain form) shows a full-screen loader, but only if the next page takes longer than the delay, so fast pages never flash. Livewire requests (actions, filters, polling) and downloads never show it, and it hides itself after 10 seconds.
+Off by default. When on, leaving for another page of the panel (a link or a plain form) shows a full-screen loader, but only if the next page takes longer than the delay, so fast pages never flash. Livewire requests (actions, filters, polling) and links with a `download` attribute never show it. When the browser stays on the page after all (a cancelled "leave page?" prompt, a link that downloads a file), a click or Escape hides it, and it hides itself after 10 seconds.
 
 ```php
 SkeletonLoadingPlugin::make()
@@ -188,17 +191,6 @@ Global settings, in `.env` (or publish the config with `php artisan vendor:publi
 | `enabled` | `SKELETON_LOADING_ENABLED` | `true` | Off: Filament's own grey placeholder and spinner everywhere, the trait included, and no page loader. |
 | `defer_tables` | `SKELETON_LOADING_DEFER_TABLES` | `false` | Every table of the panels using the plugin loads after the page, with skeleton rows. |
 
-Set the corner radius for skeleton bars and deferred table cells per panel.
-
-```php
-$panel->plugin(
-    SkeletonLoadingPlugin::make()->rounded(8),
-);
-```
-
-Use a named size such as `sm`, `lg` or `none`, or an exact radius such as `8` (pixels) or `'2.5px'`.
-Without an explicit setting, the radius follows the theme's `--fsl-bone-radius`, then `--radius-md`, then `6px`.
-
 Plugin methods, per panel:
 
 | Method | Default | Effect |
@@ -209,6 +201,20 @@ Plugin methods, per panel:
 | `pageLoaderDelay(int $milliseconds)` | `300` | How long a page may take before the loader shows. |
 | `pageLoaderLabel(string\|Closure $label)` | "Loading…" (en, pt, pt_PT, pt_BR) | Text under the symbol, also read by screen readers. |
 | `deferTables(bool\|Closure $condition = true)` | the `defer_tables` setting | Calls `deferLoading()` on the panel's tables; a closure decides per table. |
+| `rounded(int\|string $size = 'md')` | the theme's radius | Corner radius of the skeletons: `none`, `xs` to `4xl`, `full`, or pixels (`8`, `'2.5px'`). |
+| `selectSearchSkeletons(bool $condition = true)` | off | Skeleton lines while a searchable select waits for its options. |
+| `globalSearchSkeletons(bool $condition = true)` | off | Skeleton lines under the global search field while it waits for results. |
+
+Set the corner radius for skeleton bars and deferred table cells per panel.
+
+```php
+$panel->plugin(
+    SkeletonLoadingPlugin::make()->rounded(8),
+);
+```
+
+Use a named size such as `sm`, `lg` or `none`, or an exact radius such as `8` (pixels) or `'2.5px'`.
+Without an explicit setting, the radius follows the theme's `--fsl-bone-radius`, then `--radius-md`, then `6px`.
 
 ## Accessibility
 

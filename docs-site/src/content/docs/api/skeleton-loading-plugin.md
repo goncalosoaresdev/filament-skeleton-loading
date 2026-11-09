@@ -40,7 +40,8 @@ All of them return the plugin, so they chain.
 | `pageLoaderSymbol(string\|Htmlable\|Closure $symbol): self` | Brand symbol of the page loader, rendered as trusted HTML. A closure may return a string, an `Htmlable` or a view. |
 | `pageLoaderDelay(int $milliseconds): self` | How long a page may take before the loader shows (300 by default, never below 0). |
 | `pageLoaderLabel(string\|Closure $label): self` | Text under the symbol; the translated "Loading…" when not set. |
-| `searchSkeletons(bool $condition = true, bool $selects = true, bool $globalSearch = true): self` | Opts in to placeholders during native select and global search requests. Set either named switch to false to enable only the other. Off by default. |
+| `selectSearchSkeletons(bool $condition = true): self` | Skeleton lines while a searchable select waits for its options (off by default). |
+| `globalSearchSkeletons(bool $condition = true): self` | Skeleton lines under the global search field while it waits for results (off by default). |
 | `deferTables(bool\|Closure $condition = true): self` | Call `deferLoading()` on the panel's tables. A `Closure(Table): bool` decides per table. Not called: the `defer_tables` setting decides. |
 
 An explicit size takes precedence over the theme. Named sizes from `xs` to `4xl` resolve against the matching theme token. With `rounded()` omitted, the package uses `--fsl-bone-radius`, then `--radius-md`, then `6px`.
@@ -48,7 +49,7 @@ An explicit size takes precedence over the theme. Named sizes from `xs` to `4xl`
 ```php
 SkeletonLoadingPlugin::make()->rounded(8); // 8px
 SkeletonLoadingPlugin::make()->rounded('2.5px');
-SkeletonLoadingPlugin::make()->searchSkeletons(globalSearch: false); // Select search only
+SkeletonLoadingPlugin::make()->selectSearchSkeletons(); // Select search only
 ```
 
 ## Read methods
@@ -66,7 +67,7 @@ Tables that already enable Filament's `loadingSkeleton()` inherit the panel's sk
 
 ## Deferred schema placeholder
 
-The package adds `skeletonPlaceholder(SchemaPlaceholder $placeholder): Schema` to Filament schemas. Choose `Form`, `Infolist` or `List` from the `MortalKiller\FilamentSkeletonLoading\Enums\SchemaPlaceholder` enum. The schema must already use Filament's deferred loading.
+The package adds `skeletonPlaceholder(SchemaPlaceholder $placeholder): Schema` to Filament schemas. Choose `Form`, `Infolist` or `List` from the `MortalKiller\FilamentSkeletonLoading\Enums\SchemaPlaceholder` enum. The schema must already use Filament's deferred loading. Call it after any plain `extraAttributes([...])` on the same schema, which would otherwise replace it.
 
 ## Lifecycle
 

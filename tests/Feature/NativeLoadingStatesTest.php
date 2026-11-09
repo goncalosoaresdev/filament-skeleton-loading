@@ -17,7 +17,7 @@ use MortalKiller\FilamentSkeletonLoading\Tests\Fixtures\LatestOrders;
 it('keeps search skeletons opt-in per panel', function () {
     expect(FilamentView::renderHook(PanelsRenderHook::GLOBAL_SEARCH_END)->toHtml())->toBeEmpty();
 
-    $panel = Panel::make()->id('search')->plugin(SkeletonLoadingPlugin::make()->searchSkeletons());
+    $panel = Panel::make()->id('search')->plugin(SkeletonLoadingPlugin::make()->globalSearchSkeletons());
     Filament::setCurrentPanel($panel);
     $panel->boot();
 
@@ -27,7 +27,9 @@ it('keeps search skeletons opt-in per panel', function () {
 });
 
 it('lets a panel enable each search surface independently', function (bool $selects, bool $globalSearch) {
-    $plugin = SkeletonLoadingPlugin::make()->searchSkeletons(selects: $selects, globalSearch: $globalSearch);
+    $plugin = SkeletonLoadingPlugin::make()
+        ->selectSearchSkeletons($selects)
+        ->globalSearchSkeletons($globalSearch);
     $panel = Panel::make()->id('search')->plugin($plugin);
     Filament::setCurrentPanel($panel);
     $panel->boot();
@@ -36,7 +38,7 @@ it('lets a panel enable each search surface independently', function (bool $sele
         ->toBe($selects)
         ->and(str_contains(FilamentView::renderHook(PanelsRenderHook::GLOBAL_SEARCH_END)->toHtml(), 'wire:target="search"'))
         ->toBe($globalSearch);
-})->with([[true, false], [false, true]]);
+})->with([[true, false], [false, true], [true, true], [false, false]]);
 
 it('uses only visible table columns while records are deferred', function () {
     if (! defined(TablesRenderHook::class.'::CONTENT_BEFORE')) {
@@ -83,4 +85,17 @@ it('lets a deferred schema select a placeholder without evaluating its children'
         ->and(file_get_contents(__DIR__.'/../../resources/css/skeleton-loading.css'))
         ->toContain('[data-fsl-schema="infolist"]')
         ->toContain('[data-fsl-schema="list"]');
+});
+
+it('keeps the placeholder choice only when it comes after plain extra attributes', function () {
+    $after = Schema::make(app(LatestOrders::class))
+        ->extraAttributes(['data-test' => 'kept'])
+        ->skeletonPlaceholder(SchemaPlaceholder::List);
+
+    $before = Schema::make(app(LatestOrders::class))
+        ->skeletonPlaceholder(SchemaPlaceholder::List)
+        ->extraAttributes(['data-test' => 'kept']);
+
+    expect($after->getExtraAttributes())->toMatchArray(['data-test' => 'kept', 'data-fsl-schema' => 'list'])
+        ->and($before->getExtraAttributes())->not->toHaveKey('data-fsl-schema');
 });

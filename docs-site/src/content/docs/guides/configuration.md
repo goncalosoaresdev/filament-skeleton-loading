@@ -26,6 +26,9 @@ php artisan vendor:publish --tag=filament-skeleton-loading-config
 | `pageLoaderDelay(int $milliseconds)` | `300` | How long a page may take before the loader shows. Negative values become `0`. |
 | `pageLoaderLabel(string\|Closure $label)` | "Loading…" | Text under the symbol, also read by screen readers. |
 | `deferTables(bool\|Closure $condition = true)` | the `defer_tables` setting | Calls `deferLoading()` on the panel's tables; a closure receives each table and decides. |
+| `rounded(int\|string $size = 'md')` | the theme's radius | Corner radius of the skeletons. See [Rounded placeholders](/filament-skeleton-loading/guides/widgets-and-tables/#rounded-placeholders). |
+| `selectSearchSkeletons(bool $condition = true)` | off | Skeleton lines while a searchable select waits for its options. |
+| `globalSearchSkeletons(bool $condition = true)` | off | Skeleton lines under the global search field while it waits for results. |
 
 ```php
 use MortalKiller\FilamentSkeletonLoading\SkeletonLoadingPlugin;
