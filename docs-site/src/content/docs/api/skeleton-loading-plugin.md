@@ -34,12 +34,22 @@ All of them return the plugin, so they chain.
 
 | Method | Description |
 | --- | --- |
+| `rounded(int\|string $size = 'md'): self` | Sets the corner radius for skeleton bars and deferred table cells. Accepts non-negative integers as pixels, `none`, `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `full`, and non-negative pixel lengths such as `8px` or `2.5px`. Invalid values throw `InvalidArgumentException`. |
 | `shimmer(bool $condition = true): self` | Light sweeping across the skeletons (on by default). Always still for reduced motion. |
 | `pageLoader(bool $condition = true): self` | Full-screen loader between pages (off by default). |
 | `pageLoaderSymbol(string\|Htmlable\|Closure $symbol): self` | Brand symbol of the page loader, rendered as trusted HTML. A closure may return a string, an `Htmlable` or a view. |
 | `pageLoaderDelay(int $milliseconds): self` | How long a page may take before the loader shows (300 by default, never below 0). |
 | `pageLoaderLabel(string\|Closure $label): self` | Text under the symbol; the translated "Loading…" when not set. |
+| `searchSkeletons(bool $condition = true, bool $selects = true, bool $globalSearch = true): self` | Opts in to placeholders during native select and global search requests. Set either named switch to false to enable only the other. Off by default. |
 | `deferTables(bool\|Closure $condition = true): self` | Call `deferLoading()` on the panel's tables. A `Closure(Table): bool` decides per table. Not called: the `defer_tables` setting decides. |
+
+An explicit size takes precedence over the theme. Named sizes from `xs` to `4xl` resolve against the matching theme token. With `rounded()` omitted, the package uses `--fsl-bone-radius`, then `--radius-md`, then `6px`.
+
+```php
+SkeletonLoadingPlugin::make()->rounded(8); // 8px
+SkeletonLoadingPlugin::make()->rounded('2.5px');
+SkeletonLoadingPlugin::make()->searchSkeletons(globalSearch: false); // Select search only
+```
 
 ## Read methods
 
@@ -49,6 +59,14 @@ All of them return the plugin, so they chain.
 | `hasShimmer(): bool` | Whether the shimmer is on. |
 | `hasPageLoader(): bool` | Whether the page loader is on. |
 | `renderPageLoader(): string` | The page loader markup, as injected at the end of the panel's `<body>`. |
+
+## Native loading states
+
+Tables that already enable Filament's `loadingSkeleton()` inherit the panel's skeleton radius and colours. The initial placeholder for a deferred table follows the visible columns or content grid when Filament exposes table data to the content hook. Older Filament versions use the fixed placeholder.
+
+## Deferred schema placeholder
+
+The package adds `skeletonPlaceholder(SchemaPlaceholder $placeholder): Schema` to Filament schemas. Choose `Form`, `Infolist` or `List` from the `MortalKiller\FilamentSkeletonLoading\Enums\SchemaPlaceholder` enum. The schema must already use Filament's deferred loading.
 
 ## Lifecycle
 

@@ -7,31 +7,13 @@
 ])
 
 @php
-    use Filament\Support\View\ComponentAttributeBag;
     use MortalKiller\FilamentSkeletonLoading\SkeletonLoadingPlugin;
     use MortalKiller\FilamentSkeletonLoading\SkeletonLoadingServiceProvider;
+
+    // Choose the view without Blade conditionals so Livewire's morph markers never precede the root.
+    $loadingSectionView = SkeletonLoadingPlugin::current()
+        ? 'filament-skeleton-loading::loading-section'
+        : SkeletonLoadingServiceProvider::FILAMENT_VIEWS.'::components.loading-section';
 @endphp
 
-@if (! SkeletonLoadingPlugin::current())
-    {{-- Panels without the plugin keep Filament's own loading section. --}}
-    @include(SkeletonLoadingServiceProvider::FILAMENT_VIEWS.'::components.loading-section')
-@else
-<div
-    role="status"
-    aria-busy="true"
-    {{
-        ($attributes ?? new ComponentAttributeBag)
-            ->gridColumn($columnSpan, $columnStart)
-            ->class(['fi-section fsl-skeleton fsl-skeleton--generic fsl-card'])
-            ->style(['min-height: '.e($height ?? '8rem')])
-    }}
->
-    <span class="fi-sr-only">
-        {{ $loadingLabel ?? __('filament::components/loading-section.label') }}
-    </span>
-
-    <span class="fsl-bone fsl-title" aria-hidden="true"></span>
-    <span class="fsl-bone fsl-line" style="width: 90%" aria-hidden="true"></span>
-    <span class="fsl-bone fsl-line" style="width: 70%" aria-hidden="true"></span>
-</div>
-@endif
+@include($loadingSectionView)

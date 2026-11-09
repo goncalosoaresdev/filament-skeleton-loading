@@ -21,9 +21,9 @@ Plain CSS and Blade, no theme build, no new loading behaviour: the package only 
 
 Filament already loads widgets lazily and can defer tables, but while they load it shows an empty pulsing box or a spinner. The page then jumps when the real content arrives, and nothing tells the user what is about to appear. Fixing that per widget means overriding `placeholder()` and writing skeleton markup and CSS in every application.
 
-This package keeps Filament's own loading mechanisms (`placeholder()`, `deferLoading()`, the `loading-section` view) and only changes what is drawn while waiting. It does not add polling, new Livewire requests or JavaScript to the loading itself.
+This package keeps Filament's own loading mechanisms and changes what is drawn while waiting. Deferred tables can reflect visible columns or a card grid. Tables that already use Filament's `loadingSkeleton()` inherit the package styling during updates.
 
-Non-goals: skeletons for forms, infolists or modals, and skeletons while a table filters or paginates (Filament dims the table in place, which reads better than swapping it for a skeleton).
+Deferred schemas offer form, infolist and list placeholders. Use `searchSkeletons()` to opt in per panel or `searchSkeletons(globalSearch: false)` to enable only select search placeholders. Actions such as saving, exporting and uploading retain their native progress indicators.
 
 ## Documentation
 
@@ -187,6 +187,17 @@ Global settings, in `.env` (or publish the config with `php artisan vendor:publi
 | --- | --- | --- | --- |
 | `enabled` | `SKELETON_LOADING_ENABLED` | `true` | Off: Filament's own grey placeholder and spinner everywhere, the trait included, and no page loader. |
 | `defer_tables` | `SKELETON_LOADING_DEFER_TABLES` | `false` | Every table of the panels using the plugin loads after the page, with skeleton rows. |
+
+Set the corner radius for skeleton bars and deferred table cells per panel.
+
+```php
+$panel->plugin(
+    SkeletonLoadingPlugin::make()->rounded(8),
+);
+```
+
+Use a named size such as `sm`, `lg` or `none`, or an exact radius such as `8` (pixels) or `'2.5px'`.
+Without an explicit setting, the radius follows the theme's `--fsl-bone-radius`, then `--radius-md`, then `6px`.
 
 Plugin methods, per panel:
 

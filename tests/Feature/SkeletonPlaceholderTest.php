@@ -6,12 +6,15 @@ use Filament\Facades\Filament;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use Livewire\Drawer\Utils;
+use Livewire\Mechanisms\ExtendBlade\ExtendBlade;
 use MortalKiller\FilamentSkeletonLoading\SkeletonLoadingPlugin;
 use MortalKiller\FilamentSkeletonLoading\Tests\Fixtures\LatestOrders;
 use MortalKiller\FilamentSkeletonLoading\Tests\Fixtures\Plain;
 use MortalKiller\FilamentSkeletonLoading\Tests\Fixtures\RevenueChart;
 use MortalKiller\FilamentSkeletonLoading\Tests\Fixtures\SalesStats;
 use MortalKiller\FilamentSkeletonLoading\Tests\Fixtures\ShareChart;
+use MortalKiller\FilamentSkeletonLoading\Tests\Fixtures\StockWidget;
 
 function skeletonOf(string $widget): string
 {
@@ -48,6 +51,25 @@ it('replaces the lazy loading section of Filament', function () {
         ->toContain('fsl-skeleton--generic')
         ->toContain('role="status"');
 });
+
+it('lets Livewire mount a nested lazy widget on the entire placeholder', function (string $panel, string $placeholderClass) {
+    Filament::setCurrentPanel(Filament::getPanel($panel));
+    $widget = app(StockWidget::class);
+    $blade = app(ExtendBlade::class);
+    $blade->startLivewireRendering($widget);
+
+    try {
+        $html = Utils::insertAttributesIntoHtmlRoot($widget->placeholder()->render(), ['wire:id' => 'lazy-widget']);
+    } finally {
+        $blade->endLivewireRendering();
+    }
+
+    expect(ltrim($html))->toStartWith('<div wire:id="lazy-widget"')
+        ->and($html)->toContain($placeholderClass);
+})->with([
+    'with the plugin' => ['test', 'fsl-skeleton--generic'],
+    'without the plugin' => ['plain', 'fi-loading-section'],
+]);
 
 it('can turn the shimmer off', function () {
     $plugin = SkeletonLoadingPlugin::make()->shimmer(false);

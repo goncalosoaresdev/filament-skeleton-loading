@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace MortalKiller\FilamentSkeletonLoading;
 
+use Filament\Schemas\Schema;
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\Facades\View;
 use Illuminate\View\FileViewFinder;
+use MortalKiller\FilamentSkeletonLoading\Enums\SchemaPlaceholder;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -27,6 +29,15 @@ final class SkeletonLoadingServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        if (! method_exists(Schema::class, 'skeletonPlaceholder') && ! Schema::hasMacro('skeletonPlaceholder')) {
+            Schema::macro('skeletonPlaceholder', function (SchemaPlaceholder $placeholder): Schema {
+                /** @var Schema $schema */
+                $schema = $this; // @phpstan-ignore varTag.nativeType (Filament binds macro closures to the schema instance.)
+
+                return $schema->extraAttributes(['data-fsl-schema' => $placeholder->value], merge: true);
+            });
+        }
+
         if (! SkeletonLoadingPlugin::isEnabled()) {
             return;
         }

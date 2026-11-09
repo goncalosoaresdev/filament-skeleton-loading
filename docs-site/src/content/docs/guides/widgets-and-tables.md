@@ -62,7 +62,7 @@ public function table(Table $table): Table
 }
 ```
 
-While the records load, the table draws skeleton rows instead of Filament's spinner.
+While the records load, the package draws skeleton rows or cards. On versions with Filament's table content hook data, the placeholder follows the visible columns or content grid. Older versions use fixed skeleton rows.
 
 ![Deferred table drawing skeleton rows](/filament-skeleton-loading/screenshots/deferred-table-light.png)
 
@@ -76,7 +76,29 @@ SkeletonLoadingPlugin::make()
     ->deferTables(fn (Table $table): bool => $table->getLivewire() instanceof ListRecords);
 ```
 
-Filtering, sorting and paginating keep Filament's own behaviour: the table dims in place.
+On Filament versions with `loadingSkeleton()`, enable it on a table to get the package's styling while searching, sorting, filtering or paginating. The package leaves this choice to each table.
+
+## Rounded placeholders
+
+Set the radius on the panel plugin for widget skeleton bars and deferred table cells.
+
+```php
+$panel->plugin(
+    SkeletonLoadingPlugin::make()->rounded('lg'),
+);
+```
+
+Use `rounded(8)` or `rounded('8px')` for an exact radius or `rounded('none')` for square corners. With the method omitted, the plugin follows the theme's `--fsl-bone-radius`, then `--radius-md`, with a `6px` fallback. The outer table border and chart ring keep their own shape. Notification and deferred schema placeholders have their own styling.
+
+## Search skeletons
+
+Opt in per panel when you want skeleton feedback for Filament's native asynchronous select search and global search request:
+
+```php
+SkeletonLoadingPlugin::make()->searchSkeletons();
+```
+
+Use `searchSkeletons(globalSearch: false)` for select search only or `searchSkeletons(selects: false)` for global search only. Filament keeps its native messages and keyboard interaction.
 
 ## Notifications and lazy sections
 
@@ -96,3 +118,15 @@ Livewire::test(ListOrders::class)
 ```
 
 If you turn `defer_tables` on, pin `SKELETON_LOADING_DEFER_TABLES` in `phpunit.xml` so the tests do not depend on `.env`.
+
+Deferred schemas use a form placeholder by default. A deferred schema on a `ViewRecord` page gets a read-only layout, and a schema directly inside a repeater gets a list layout. To select a shape explicitly, call the fluent method on the schema you defer:
+
+```php
+use MortalKiller\FilamentSkeletonLoading\Enums\SchemaPlaceholder;
+
+$schema
+    ->lazyLoaded()
+    ->skeletonPlaceholder(SchemaPlaceholder::Infolist);
+```
+
+The enum provides `Form`, `Infolist` and `List`. The method selects the visual shape while Filament controls when the schema loads.

@@ -7,14 +7,21 @@ namespace MortalKiller\FilamentSkeletonLoading;
 use Closure;
 use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Repeater;
 use Filament\Panel;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Schema;
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\View\ComponentAttributeBag;
 use Filament\Tables\Table;
+use Filament\Tables\View\TablesRenderHook;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Support\HtmlString;
+use InvalidArgumentException;
+use MortalKiller\FilamentSkeletonLoading\Enums\SchemaPlaceholder;
 
 final class SkeletonLoadingPlugin implements Plugin
 {
@@ -23,6 +30,12 @@ final class SkeletonLoadingPlugin implements Plugin
     public const PACKAGE = 'mortalkiller/filament-skeleton-loading';
 
     private bool $shimmer = true;
+
+    private ?string $radius = null;
+
+    private bool $selectSearchSkeletons = false;
+
+    private bool $globalSearchSkeletons = false;
 
     private bool $pageLoader = false;
 
@@ -71,6 +84,44 @@ final class SkeletonLoadingPlugin implements Plugin
     public function hasShimmer(): bool
     {
         return $this->shimmer;
+    }
+
+    /** Round skeleton bars and cells using a theme size or a non-negative CSS pixel length. */
+    public function rounded(int|string $size = 'md'): self
+    {
+        if (is_int($size)) {
+            $size .= 'px';
+        }
+
+        $fallback = match ($size) {
+            'xs' => '0.125rem',
+            'sm' => '0.25rem',
+            'md' => '6px',
+            'lg' => '0.5rem',
+            'xl' => '0.75rem',
+            '2xl' => '1rem',
+            '3xl' => '1.5rem',
+            '4xl' => '2rem',
+            default => null,
+        };
+
+        $this->radius = match (true) {
+            $fallback !== null => "var(--radius-{$size}, {$fallback})",
+            $size === 'none' => '0',
+            $size === 'full' => '9999px',
+            preg_match('/\A(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)px\z/', $size) === 1 => $size,
+            default => throw new InvalidArgumentException('The skeleton radius must be a theme size or a non-negative pixel length.'),
+        };
+
+        return $this;
+    }
+
+    public function searchSkeletons(bool $condition = true, bool $selects = true, bool $globalSearch = true): self
+    {
+        $this->selectSearchSkeletons = $condition && $selects;
+        $this->globalSearchSkeletons = $condition && $globalSearch;
+
+        return $this;
     }
 
     /**
@@ -157,6 +208,28 @@ final class SkeletonLoadingPlugin implements Plugin
                     ->map(fn (Css $stylesheet): string => $stylesheet->getHtml()->toHtml())
                     ->implode(''),
             );
+
+            $panel->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn (): string => $this->radius === null
+                    ? ''
+                    : '<style>:root{--fsl-rounded:'.$this->radius.'}</style>',
+            );
+
+            if (defined(TablesRenderHook::class.'::CONTENT_BEFORE')) {
+                $panel->renderHook(TablesRenderHook::CONTENT_BEFORE, fn (array $data): string => $this->renderDeferredTable($panel, $data));
+            }
+
+            if ($this->selectSearchSkeletons) {
+                $panel->renderHook(PanelsRenderHook::BODY_START, fn (): string => '<span hidden data-fsl-search></span>');
+            }
+
+            if ($this->globalSearchSkeletons) {
+                $panel->renderHook(
+                    PanelsRenderHook::GLOBAL_SEARCH_END,
+                    fn (): string => view('filament-skeleton-loading::search')->render(),
+                );
+            }
         }
 
         if (self::isEnabled() && $this->pageLoader) {
@@ -166,9 +239,33 @@ final class SkeletonLoadingPlugin implements Plugin
         if (self::isEnabled() && ! $this->shimmer) {
             $panel->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn (): string => '<style>.fsl-bone::after,.fi-ta-table-loading-ctn::after,.fi-no-notifications-loading-ctn::after,.fi-sc-loading::after{display:none!important}</style>',
+                fn (): string => '<style>.fsl-bone::after,.fi-ta-table-loading-ctn::after,.fi-no-notifications-loading-ctn::after,.fi-sc-loading::after{display:none!important}.fi-ta-content-loading{--loading-skeleton-animation:none}</style>',
             );
         }
+    }
+
+    /** @param array<string, mixed> $data */
+    private function renderDeferredTable(Panel $panel, array $data): string
+    {
+        $table = $data['table'] ?? null;
+
+        if (Filament::getCurrentPanel() !== $panel || ! $table instanceof Table || ! array_key_exists('records', $data) || $data['records'] !== null) {
+            return '';
+        }
+
+        $grid = $table->getContentGrid();
+        $isCardLayout = $grid !== null || $table->hasColumnsLayout();
+        $columns = count($table->getVisibleColumns());
+
+        if (! $isCardLayout && $columns === 0) {
+            return '';
+        }
+
+        return view('filament-skeleton-loading::deferred-table', [
+            'columns' => min($columns, 12),
+            'isCardLayout' => $isCardLayout,
+            'attributes' => $isCardLayout ? (new ComponentAttributeBag)->grid($grid ?? ['default' => 1]) : null,
+        ])->render();
     }
 
     public function boot(Panel $panel): void
@@ -176,6 +273,28 @@ final class SkeletonLoadingPlugin implements Plugin
         if (! self::isEnabled()) {
             return;
         }
+
+        Schema::configureUsing(function (Schema $schema) use ($panel): void {
+            if (Filament::getCurrentPanel() !== $panel) {
+                return;
+            }
+
+            $schema->extraAttributes(function () use ($schema): array {
+                // Earlier Filament versions do not expose deferred schemas.
+                // @phpstan-ignore function.alreadyNarrowedType (The analysis environment uses Filament 5.)
+                if (! method_exists($schema, 'isLoadingDeferred') || ! $schema->isLoadingDeferred()) {
+                    return [];
+                }
+
+                $kind = match (true) {
+                    $schema->getParentComponent() instanceof Repeater => SchemaPlaceholder::List,
+                    $schema->getLivewire() instanceof ViewRecord => SchemaPlaceholder::Infolist,
+                    default => SchemaPlaceholder::Form,
+                };
+
+                return ['data-fsl-schema-default' => $kind->value];
+            }, merge: true);
+        });
 
         // Read at each table, so the setting and later plugin calls are honoured.
         Table::configureUsing(function (Table $table) use ($panel): void {
